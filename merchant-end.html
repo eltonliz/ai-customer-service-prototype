@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AI客服管理平台</title>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script>/* Chart.js v4.4.1 - inlined */
 /**
  * Skipped minification because the original files appears to be already minified.
@@ -82,9 +82,9 @@ h1,h2,h3,.metric-value,.big-num,.stat-value,.health-value{font-family:'Instrumen
 .notif-dot{position:absolute;top:6px;right:6px;width:6px;height:6px;background:var(--danger);border-radius:50%}
 .user-avatar{width:30px;height:30px;border-radius:50%;background:var(--primary-light);color:var(--primary);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600}
 .main{margin-left:var(--sidebar-w);margin-top:var(--topbar-h);height:calc(100vh - var(--topbar-h));overflow-y:auto;background:var(--surface)}
-.main-inner{padding:28px;max-width:1200px}
+.main-inner{padding:28px;width:100%}
 .page{display:none}.page.active{display:block}
-.metrics-grid{display:flex;flex-direction:column;gap:4px}
+.metrics-grid{display:flex;flex-direction:column;gap:4px;width:100%}
 .metric-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border)}.metric-row:last-child{border-bottom:none}
 .metric-label{font-size:12px;color:var(--muted);font-weight:500}
 .metric-value{font-size:28px;color:var(--text);line-height:1.2}
@@ -93,10 +93,10 @@ h1,h2,h3,.metric-value,.big-num,.stat-value,.health-value{font-family:'Instrumen
 .section-title{font-size:16px;font-weight:600;color:var(--text);margin-bottom:16px}
 .section-subtitle{font-size:13px;color:var(--muted);margin-bottom:20px}
 .charts-row{display:grid;grid-template-columns:2fr 1fr;gap:24px;margin-top:24px;margin-bottom:32px}
-.chart-box{background:var(--surface);border-radius:8px;padding:20px;margin-bottom:32px}
+.chart-box{background:var(--surface);border-radius:8px;padding:20px;margin-bottom:32px;width:100%}
 .chart-box h3{font-size:14px;font-weight:600;margin-bottom:16px;color:var(--text)}
 .chart-box canvas{max-height:260px}
-.table-wrap{background:var(--white);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.table-wrap{background:var(--white);border:1px solid var(--border);border-radius:10px;overflow:hidden;width:100%}
 .data-table{width:100%;border-collapse:collapse}
 .data-table thead{background:var(--surface)}
 .data-table th{padding:10px 16px;text-align:left;font-size:12px;font-weight:600;color:var(--muted);border-bottom:1px solid var(--border);white-space:nowrap}
@@ -234,7 +234,8 @@ h1,h2,h3,.metric-value,.big-num,.stat-value,.health-value{font-family:'Instrumen
 .mt-16{margin-top:16px}.mt-24{margin-top:24px}.mb-16{margin-bottom:16px}.mb-24{margin-bottom:24px}
 .text-muted{color:var(--muted)}.text-sm{font-size:12px}.text-right{text-align:right}.w-full{width:100%}
 .text-center{text-align:center}.text-left{text-align:left}
-.font-mono{font-family:'Noto Sans SC',monospace}
+.font-mono{font-family:'JetBrains Mono','Noto Sans SC',monospace}
+.mono{font-family:'JetBrains Mono',monospace}
 .font-bold{font-weight:600}.font-medium{font-weight:500}.font-normal{font-weight:400}
 .rounded-lg{border-radius:10px}.rounded-md{border-radius:8px}.rounded-sm{border-radius:6px}
 .shadow-sm{box-shadow:0 1px 2px oklch(0.15 0.02 250/0.05)}.shadow-md{box-shadow:0 4px 8px oklch(0.15 0.02 250/0.08)}.shadow-lg{box-shadow:0 8px 16px oklch(0.15 0.02 250/0.12)}
@@ -438,19 +439,22 @@ h1,h2,h3,.metric-value,.big-num,.stat-value,.health-value{font-family:'Instrumen
     <div class="page" id="page-chat-manage">
       <div class="chat-layout">
         <div class="chat-sessions">
-          <div class="chat-session active" onclick="selectSession(this)"><div class="flex items-center justify-between"><span class="chat-session-name">张三</span><span class="chat-session-time">14:32</span></div><div class="chat-session-msg">请问这款产品的保修期是多久？</div></div>
-          <div class="chat-session" onclick="selectSession(this)"><div class="flex items-center justify-between"><span class="chat-session-name">李四</span><span class="chat-session-time">14:28</span></div><div class="chat-session-msg">我的订单什么时候发货？</div></div>
-          <div class="chat-session" onclick="selectSession(this)"><div class="flex items-center justify-between"><span class="chat-session-name">王五</span><span class="chat-session-time">14:15</span></div><div class="chat-session-msg">退换货流程是怎样的？<span class="chat-session-badge">2</span></div></div>
-          <div class="chat-session" onclick="selectSession(this)"><div class="flex items-center justify-between"><span class="chat-session-name">赵六</span><span class="chat-session-time">13:50</span></div><div class="chat-session-msg">优惠券可以叠加使用吗？</div></div>
-          <div class="chat-session" onclick="selectSession(this)"><div class="flex items-center justify-between"><span class="chat-session-name">孙七</span><span class="chat-session-time">13:22</span></div><div class="chat-session-msg">请问有货到付款吗？</div></div>
-          <div class="chat-session" onclick="selectSession(this)"><div class="flex items-center justify-between"><span class="chat-session-name">周八</span><span class="chat-session-time">12:45</span></div><div class="chat-session-msg">收到商品有破损怎么办？</div></div>
-          <div class="chat-session" onclick="selectSession(this)"><div class="flex items-center justify-between"><span class="chat-session-name">吴九</span><span class="chat-session-time">12:20</span></div><div class="chat-session-msg">可以开发票吗？</div></div>
-          <div class="chat-session" onclick="selectSession(this)"><div class="flex items-center justify-between"><span class="chat-session-name">郑十</span><span class="chat-session-time">11:55</span></div><div class="chat-session-msg">这个颜色还有货吗？<span class="chat-session-badge">1</span></div></div>
-          <div class="chat-session" onclick="selectSession(this)"><div class="flex items-center justify-between"><span class="chat-session-name">钱一一</span><span class="chat-session-time">11:30</span></div><div class="chat-session-msg">怎么查看物流信息？</div></div>
-          <div class="chat-session" onclick="selectSession(this)"><div class="flex items-center justify-between"><span class="chat-session-name">陈一二</span><span class="chat-session-time">11:05</span></div><div class="chat-session-msg">会员积分怎么兑换？</div></div>
-          <div class="chat-session" onclick="selectSession(this)"><div class="flex items-center justify-between"><span class="chat-session-name">林一三</span><span class="chat-session-time">10:40</span></div><div class="chat-session-msg">团购活动怎么参加？</div></div>
-          <div class="chat-session" onclick="selectSession(this)"><div class="flex items-center justify-between"><span class="chat-session-name">黄一四</span><span class="chat-session-time">10:15</span></div><div class="chat-session-msg">商品支持以旧换新吗？</div></div>
-          <div class="chat-session" onclick="selectSession(this)"><div class="flex items-center justify-between"><span class="chat-session-name">杨一五</span><span class="chat-session-time">09:50</span></div><div class="chat-session-msg">请问可以开增值税专用发票吗？</div></div>
+          <div class="chat-session active" onclick="selectSession(this)"><div class="flex items-center justify-between"><span class="chat-session-name">张三</span><span class="flex items-center gap-6"><span class="badge badge-success" style="font-size:10px">进行中</span><span class="chat-session-time">14:32</span></span></div><div class="chat-session-msg">请问这款产品的保修期是多久？</div></div>
+          <div class="chat-session" onclick="selectSession(this)"><div class="flex items-center justify-between"><span class="chat-session-name">李四</span><span class="flex items-center gap-6"><span class="badge badge-success" style="font-size:10px">进行中</span><span class="chat-session-time">14:28</span></span></div><div class="chat-session-msg">我的订单什么时候发货？</div></div>
+          <div class="chat-session" onclick="selectSession(this)"><div class="flex items-center justify-between"><span class="chat-session-name">王五</span><span class="flex items-center gap-6"><span class="badge badge-success" style="font-size:10px">进行中</span><span class="chat-session-time">14:15</span></span></div><div class="chat-session-msg">退换货流程是怎样的？<span class="chat-session-badge">2</span></div></div>
+          <div class="chat-session" style="background:oklch(0.97 0.02 80)" onclick="selectSession(this)"><div class="flex items-center justify-between"><span class="chat-session-name">何排队A</span><span class="flex items-center gap-6"><span class="badge badge-warning" style="font-size:10px">排队中</span><span class="chat-session-time">14:30</span></span></div><div class="chat-session-msg">想咨询一下会员权益相关的问题</div></div>
+          <div class="chat-session" style="background:oklch(0.97 0.02 80)" onclick="selectSession(this)"><div class="flex items-center justify-between"><span class="chat-session-name">何排队B</span><span class="flex items-center gap-6"><span class="badge badge-warning" style="font-size:10px">排队中</span><span class="chat-session-time">14:25</span></span></div><div class="chat-session-msg">请问商品可以货到付款吗？</div></div>
+          <div class="chat-session" style="background:oklch(0.97 0.02 80)" onclick="selectSession(this)"><div class="flex items-center justify-between"><span class="chat-session-name">何排队C</span><span class="flex items-center gap-6"><span class="badge badge-warning" style="font-size:10px">排队中</span><span class="chat-session-time">14:18</span></span></div><div class="chat-session-msg">收到商品有破损，需要处理</div></div>
+          <div class="chat-session" onclick="selectSession(this)"><div class="flex items-center justify-between"><span class="chat-session-name">赵六</span><span class="flex items-center gap-6"><span class="badge badge-success" style="font-size:10px">进行中</span><span class="chat-session-time">13:50</span></span></div><div class="chat-session-msg">优惠券可以叠加使用吗？</div></div>
+          <div class="chat-session" onclick="selectSession(this)"><div class="flex items-center justify-between"><span class="chat-session-name">孙七</span><span class="flex items-center gap-6"><span class="badge badge-success" style="font-size:10px">进行中</span><span class="chat-session-time">13:22</span></span></div><div class="chat-session-msg">请问有货到付款吗？</div></div>
+          <div class="chat-session" onclick="selectSession(this)"><div class="flex items-center justify-between"><span class="chat-session-name">周八</span><span class="flex items-center gap-6"><span class="badge badge-success" style="font-size:10px">进行中</span><span class="chat-session-time">12:45</span></span></div><div class="chat-session-msg">收到商品有破损怎么办？</div></div>
+          <div class="chat-session" onclick="selectSession(this)"><div class="flex items-center justify-between"><span class="chat-session-name">吴九</span><span class="flex items-center gap-6"><span class="badge badge-success" style="font-size:10px">进行中</span><span class="chat-session-time">12:20</span></span></div><div class="chat-session-msg">可以开发票吗？</div></div>
+          <div class="chat-session" onclick="selectSession(this)"><div class="flex items-center justify-between"><span class="chat-session-name">郑十</span><span class="flex items-center gap-6"><span class="badge badge-success" style="font-size:10px">进行中</span><span class="chat-session-time">11:55</span></span></div><div class="chat-session-msg">这个颜色还有货吗？<span class="chat-session-badge">1</span></div></div>
+          <div class="chat-session" onclick="selectSession(this)"><div class="flex items-center justify-between"><span class="chat-session-name">钱一一</span><span class="flex items-center gap-6"><span class="badge badge-success" style="font-size:10px">进行中</span><span class="chat-session-time">11:30</span></span></div><div class="chat-session-msg">怎么查看物流信息？</div></div>
+          <div class="chat-session" onclick="selectSession(this)"><div class="flex items-center justify-between"><span class="chat-session-name">陈一二</span><span class="flex items-center gap-6"><span class="badge badge-success" style="font-size:10px">进行中</span><span class="chat-session-time">11:05</span></span></div><div class="chat-session-msg">会员积分怎么兑换？</div></div>
+          <div class="chat-session" onclick="selectSession(this)"><div class="flex items-center justify-between"><span class="chat-session-name">林一三</span><span class="flex items-center gap-6"><span class="badge badge-success" style="font-size:10px">进行中</span><span class="chat-session-time">10:40</span></span></div><div class="chat-session-msg">团购活动怎么参加？</div></div>
+          <div class="chat-session" onclick="selectSession(this)"><div class="flex items-center justify-between"><span class="chat-session-name">黄一四</span><span class="flex items-center gap-6"><span class="badge badge-success" style="font-size:10px">进行中</span><span class="chat-session-time">10:15</span></span></div><div class="chat-session-msg">商品支持以旧换新吗？</div></div>
+          <div class="chat-session" onclick="selectSession(this)"><div class="flex items-center justify-between"><span class="chat-session-name">杨一五</span><span class="flex items-center gap-6"><span class="badge badge-success" style="font-size:10px">进行中</span><span class="chat-session-time">09:50</span></span></div><div class="chat-session-msg">请问可以开增值税专用发票吗？</div></div>
         </div>
         <div class="chat-main">
           <div class="chat-header" id="chat-header-name">张三 <span class="text-muted text-sm" style="margin-left:8px;font-weight:400">在线</span></div>
@@ -461,6 +465,13 @@ h1,h2,h3,.metric-value,.big-num,.stat-value,.health-value{font-family:'Instrumen
             <div class="chat-msg agent"><div class="chat-avatar bot">AI</div><div class="chat-bubble">当然可以。保修期外我们仍提供有偿维修服务，具体费用根据故障情况而定。</div></div>
             <div class="chat-msg user"><div class="chat-avatar user">张</div><div class="chat-bubble">好的，谢谢！</div></div>
             <div class="chat-msg agent"><div class="chat-avatar bot">AI</div><div class="chat-bubble">不客气！如果还有其他问题，随时可以咨询我。祝您购物愉快！</div></div>
+          </div>
+          <div style="padding:8px 16px 0;display:flex;gap:6px;flex-wrap:wrap">
+            <span style="font-size:11px;color:var(--muted);font-weight:500;line-height:28px">AI推荐回复:</span>
+            <button class="btn btn-outline btn-sm" style="font-size:11px;padding:3px 10px" onclick="fillAIReply(this)">您好，请问有什么可以帮您？</button>
+            <button class="btn btn-outline btn-sm" style="font-size:11px;padding:3px 10px" onclick="fillAIReply(this)">请稍等，正在为您查询...</button>
+            <button class="btn btn-outline btn-sm" style="font-size:11px;padding:3px 10px" onclick="fillAIReply(this)">感谢您的耐心等待，问题已为您处理。</button>
+            <button class="btn btn-outline btn-sm" style="font-size:11px;padding:3px 10px" onclick="fillAIReply(this)">请问还有其他需要帮助的吗？</button>
           </div>
           <div class="chat-input-area"><input type="text" placeholder="输入消息..." id="chat-input" onkeydown="if(event.key==='Enter')sendChat()"><button class="btn btn-primary btn-sm" onclick="sendChat()">发送</button></div>
         </div>
@@ -513,7 +524,7 @@ h1,h2,h3,.metric-value,.big-num,.stat-value,.health-value{font-family:'Instrumen
     <div class="page" id="page-knowledge">
       <div class="toolbar">
         <div class="toolbar-left"><div class="search-wrap"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="9" r="5.5"/><path d="M13.5 13.5L18 18"/></svg><input class="search-input" placeholder="搜索知识条目..." id="knowledge-search" oninput="filterKnowledgeTable()"></div></div>
-        <div class="toolbar-right"><button class="btn btn-primary btn-sm" aria-label="添加知识条目" onclick="openModal('knowledgeModal')">添加条目</button></div>
+        <div class="toolbar-right"><button class="btn btn-primary btn-sm" aria-label="添加知识条目" onclick="document.getElementById('knowledgeModal-title').textContent='添加知识条目';document.getElementById('km-title').value='';document.getElementById('km-cat').value='';document.getElementById('km-content').value='';openModal('knowledgeModal')">添加条目</button></div>
       </div>
       <div class="tabs" id="knowledge-tabs">
         <button class="tab active" data-filter="all" onclick="switchTab(this,'knowledge')">全部</button>
@@ -522,19 +533,19 @@ h1,h2,h3,.metric-value,.big-num,.stat-value,.health-value{font-family:'Instrumen
         <button class="tab" data-filter="通用" onclick="switchTab(this,'knowledge')">通用</button>
       </div>
       <div class="table-wrap"><table class="data-table" id="knowledge-table"><thead><tr><th>标题</th><th>分类</th><th>状态</th><th>更新时间</th><th>操作</th></tr></thead><tbody>
-        <tr data-cat="产品"><td>产品规格说明</td><td>产品</td><td><span class="badge badge-success">已发布</span></td><td>2024-01-15</td><td><button class="btn-link" onclick="showToast('编辑功能已打开')">编辑</button></td></tr>
-        <tr data-cat="政策"><td>退换货政策</td><td>政策</td><td><span class="badge badge-success">已发布</span></td><td>2024-01-14</td><td><button class="btn-link" onclick="showToast('编辑功能已打开')">编辑</button></td></tr>
-        <tr data-cat="产品"><td>配件兼容性列表</td><td>产品</td><td><span class="badge badge-warning">草稿</span></td><td>2024-01-13</td><td><button class="btn-link" onclick="showToast('编辑功能已打开')">编辑</button></td></tr>
-        <tr data-cat="通用"><td>常见问题 FAQ</td><td>通用</td><td><span class="badge badge-success">已发布</span></td><td>2024-01-12</td><td><button class="btn-link" onclick="showToast('编辑功能已打开')">编辑</button></td></tr>
-        <tr data-cat="政策"><td>会员权益说明</td><td>政策</td><td><span class="badge badge-success">已发布</span></td><td>2024-01-11</td><td><button class="btn-link" onclick="showToast('编辑功能已打开')">编辑</button></td></tr>
-        <tr data-cat="产品"><td>新品上市信息</td><td>产品</td><td><span class="badge badge-info">审核中</span></td><td>2024-01-10</td><td><button class="btn-link" onclick="showToast('编辑功能已打开')">编辑</button></td></tr>
-        <tr data-cat="通用"><td>支付方式说明</td><td>通用</td><td><span class="badge badge-success">已发布</span></td><td>2024-01-09</td><td><button class="btn-link" onclick="showToast('编辑功能已打开')">编辑</button></td></tr>
-        <tr data-cat="政策"><td>隐私保护政策</td><td>政策</td><td><span class="badge badge-success">已发布</span></td><td>2024-01-08</td><td><button class="btn-link" onclick="showToast('编辑功能已打开')">编辑</button></td></tr>
-        <tr data-cat="产品"><td>产品使用教程</td><td>产品</td><td><span class="badge badge-success">已发布</span></td><td>2024-01-07</td><td><button class="btn-link" onclick="showToast('编辑功能已打开')">编辑</button></td></tr>
-        <tr data-cat="通用"><td>物流配送说明</td><td>通用</td><td><span class="badge badge-warning">草稿</span></td><td>2024-01-06</td><td><button class="btn-link" onclick="showToast('编辑功能已打开')">编辑</button></td></tr>
-        <tr data-cat="政策"><td>发票开具规则</td><td>政策</td><td><span class="badge badge-success">已发布</span></td><td>2024-01-05</td><td><button class="btn-link" onclick="showToast('编辑功能已打开')">编辑</button></td></tr>
-        <tr data-cat="产品"><td>配件购买指南</td><td>产品</td><td><span class="badge badge-success">已发布</span></td><td>2024-01-04</td><td><button class="btn-link" onclick="showToast('编辑功能已打开')">编辑</button></td></tr>
-        <tr data-cat="通用"><td>账户安全指南</td><td>通用</td><td><span class="badge badge-success">已发布</span></td><td>2024-01-03</td><td><button class="btn-link" onclick="showToast('编辑功能已打开')">编辑</button></td></tr>
+        <tr data-cat="产品"><td>产品规格说明</td><td>产品</td><td><span class="badge badge-success">已发布</span></td><td>2024-01-15</td><td><button class="btn-link" onclick="editKnowledge(this,'产品规格说明','产品','已发布')">编辑</button></td></tr>
+        <tr data-cat="政策"><td>退换货政策</td><td>政策</td><td><span class="badge badge-success">已发布</span></td><td>2024-01-14</td><td><button class="btn-link" onclick="editKnowledge(this,'退换货政策','政策','已发布')">编辑</button></td></tr>
+        <tr data-cat="产品"><td>配件兼容性列表</td><td>产品</td><td><span class="badge badge-warning">草稿</span></td><td>2024-01-13</td><td><button class="btn-link" onclick="editKnowledge(this,'配件兼容性列表','产品','草稿')">编辑</button></td></tr>
+        <tr data-cat="通用"><td>常见问题 FAQ</td><td>通用</td><td><span class="badge badge-success">已发布</span></td><td>2024-01-12</td><td><button class="btn-link" onclick="editKnowledge(this,'常见问题 FAQ','通用','已发布')">编辑</button></td></tr>
+        <tr data-cat="政策"><td>会员权益说明</td><td>政策</td><td><span class="badge badge-success">已发布</span></td><td>2024-01-11</td><td><button class="btn-link" onclick="editKnowledge(this,'会员权益说明','政策','已发布')">编辑</button></td></tr>
+        <tr data-cat="产品"><td>新品上市信息</td><td>产品</td><td><span class="badge badge-info">审核中</span></td><td>2024-01-10</td><td><button class="btn-link" onclick="editKnowledge(this,'新品上市信息','产品','审核中')">编辑</button></td></tr>
+        <tr data-cat="通用"><td>支付方式说明</td><td>通用</td><td><span class="badge badge-success">已发布</span></td><td>2024-01-09</td><td><button class="btn-link" onclick="editKnowledge(this,'支付方式说明','通用','已发布')">编辑</button></td></tr>
+        <tr data-cat="政策"><td>隐私保护政策</td><td>政策</td><td><span class="badge badge-success">已发布</span></td><td>2024-01-08</td><td><button class="btn-link" onclick="editKnowledge(this,'隐私保护政策','政策','已发布')">编辑</button></td></tr>
+        <tr data-cat="产品"><td>产品使用教程</td><td>产品</td><td><span class="badge badge-success">已发布</span></td><td>2024-01-07</td><td><button class="btn-link" onclick="editKnowledge(this,'产品使用教程','产品','已发布')">编辑</button></td></tr>
+        <tr data-cat="通用"><td>物流配送说明</td><td>通用</td><td><span class="badge badge-warning">草稿</span></td><td>2024-01-06</td><td><button class="btn-link" onclick="editKnowledge(this,'物流配送说明','通用','草稿')">编辑</button></td></tr>
+        <tr data-cat="政策"><td>发票开具规则</td><td>政策</td><td><span class="badge badge-success">已发布</span></td><td>2024-01-05</td><td><button class="btn-link" onclick="editKnowledge(this,'发票开具规则','政策','已发布')">编辑</button></td></tr>
+        <tr data-cat="产品"><td>配件购买指南</td><td>产品</td><td><span class="badge badge-success">已发布</span></td><td>2024-01-04</td><td><button class="btn-link" onclick="editKnowledge(this,'配件购买指南','产品','已发布')">编辑</button></td></tr>
+        <tr data-cat="通用"><td>账户安全指南</td><td>通用</td><td><span class="badge badge-success">已发布</span></td><td>2024-01-03</td><td><button class="btn-link" onclick="editKnowledge(this,'账户安全指南','通用','已发布')">编辑</button></td></tr>
       </tbody></table></div>
       <div class="mt-24">
         <div class="flex items-center justify-between mb-16">
@@ -547,12 +558,15 @@ h1,h2,h3,.metric-value,.big-num,.stat-value,.health-value{font-family:'Instrumen
             <button class="btn btn-outline btn-sm" onclick="showToast('查看23个新QA对详情')">查看详情</button>
           </div>
           <div class="section-subtitle" style="margin-bottom:12px">待确认QA</div>
-          <div class="table-wrap"><table class="data-table"><thead><tr><th>问题</th><th>AI回答</th><th>来源</th><th>操作</th></tr></thead><tbody>
-            <tr><td>产品支持快充吗？</td><td>支持，使用20W快充充电器即可</td><td><span class="text-sm text-muted">用户会话 #3821</span></td><td><button class="btn btn-primary btn-sm" onclick="adoptQA(this)" style="margin-right:4px">采纳</button><button class="btn btn-outline btn-sm" onclick="ignoreQA(this)">忽略</button></td></tr>
-            <tr><td>可以刻字定制吗？</td><td>暂不支持刻字定制服务</td><td><span class="text-sm text-muted">用户会话 #3845</span></td><td><button class="btn btn-primary btn-sm" onclick="adoptQA(this)" style="margin-right:4px">采纳</button><button class="btn btn-outline btn-sm" onclick="ignoreQA(this)">忽略</button></td></tr>
-            <tr><td>退货需要多长时间？</td><td>收到退货后3-5个工作日完成退款</td><td><span class="text-sm text-muted">用户会话 #3901</span></td><td><button class="btn btn-primary btn-sm" onclick="adoptQA(this)" style="margin-right:4px">采纳</button><button class="btn btn-outline btn-sm" onclick="ignoreQA(this)">忽略</button></td></tr>
-            <tr><td>有学生优惠吗？</td><td>目前暂无学生专属优惠</td><td><span class="text-sm text-muted">用户会话 #3912</span></td><td><button class="btn btn-primary btn-sm" onclick="adoptQA(this)" style="margin-right:4px">采纳</button><button class="btn btn-outline btn-sm" onclick="ignoreQA(this)">忽略</button></td></tr>
-            <tr><td>配件可以单独购买吗？</td><td>可以，在配件专区单独购买</td><td><span class="text-sm text-muted">用户会话 #3930</span></td><td><button class="btn btn-primary btn-sm" onclick="adoptQA(this)" style="margin-right:4px">采纳</button><button class="btn btn-outline btn-sm" onclick="ignoreQA(this)">忽略</button></td></tr>
+          <div style="padding:8px 12px;background:oklch(0.96 0.015 250);border-radius:6px;margin-bottom:12px;font-size:12px;color:var(--text-sec);border-left:3px solid var(--primary)">
+            仅采纳经人工验证的正确答案，错误答案将被忽略且不纳入知识库。
+          </div>
+          <div class="table-wrap"><table class="data-table"><thead><tr><th>问题</th><th>AI回答</th><th>来源</th><th>答案验证</th><th>操作</th></tr></thead><tbody>
+            <tr><td>产品支持快充吗？</td><td>支持，使用20W快充充电器即可</td><td><span class="text-sm text-muted">用户会话 #3821</span></td><td><span class="badge badge-success">正确</span></td><td><button class="btn btn-primary btn-sm" onclick="adoptQA(this)" style="margin-right:4px">采纳</button><button class="btn btn-outline btn-sm" onclick="ignoreQA(this)" style="margin-right:4px">忽略</button><button class="btn-link" onclick="openQADetail(this,'产品支持快充吗？','支持，使用20W快充充电器即可','用户会话 #3821','正确','95.2%')">查看详情</button></td></tr>
+            <tr><td>可以刻字定制吗？</td><td>暂不支持刻字定制服务</td><td><span class="text-sm text-muted">用户会话 #3845</span></td><td><span class="badge badge-success">正确</span></td><td><button class="btn btn-primary btn-sm" onclick="adoptQA(this)" style="margin-right:4px">采纳</button><button class="btn btn-outline btn-sm" onclick="ignoreQA(this)" style="margin-right:4px">忽略</button><button class="btn-link" onclick="openQADetail(this,'可以刻字定制吗？','暂不支持刻字定制服务','用户会话 #3845','正确','91.8%')">查看详情</button></td></tr>
+            <tr><td>退货需要多长时间？</td><td>收到退货后3-5个工作日完成退款</td><td><span class="text-sm text-muted">用户会话 #3901</span></td><td><span class="badge badge-danger">存疑</span></td><td><button class="btn btn-primary btn-sm" onclick="adoptQA(this)" style="margin-right:4px">采纳</button><button class="btn btn-outline btn-sm" onclick="ignoreQA(this)" style="margin-right:4px">忽略</button><button class="btn-link" onclick="openQADetail(this,'退货需要多长时间？','收到退货后3-5个工作日完成退款','用户会话 #3901','存疑','62.4%')">查看详情</button></td></tr>
+            <tr><td>有学生优惠吗？</td><td>目前暂无学生专属优惠</td><td><span class="text-sm text-muted">用户会话 #3912</span></td><td><span class="badge badge-success">正确</span></td><td><button class="btn btn-primary btn-sm" onclick="adoptQA(this)" style="margin-right:4px">采纳</button><button class="btn btn-outline btn-sm" onclick="ignoreQA(this)" style="margin-right:4px">忽略</button><button class="btn-link" onclick="openQADetail(this,'有学生优惠吗？','目前暂无学生专属优惠','用户会话 #3912','正确','88.7%')">查看详情</button></td></tr>
+            <tr><td>配件可以单独购买吗？</td><td>可以，在配件专区单独购买</td><td><span class="text-sm text-muted">用户会话 #3930</span></td><td><span class="badge badge-danger">存疑</span></td><td><button class="btn btn-primary btn-sm" onclick="adoptQA(this)" style="margin-right:4px">采纳</button><button class="btn btn-outline btn-sm" onclick="ignoreQA(this)" style="margin-right:4px">忽略</button><button class="btn-link" onclick="openQADetail(this,'配件可以单独购买吗？','可以，在配件专区单独购买','用户会话 #3930','存疑','58.3%')">查看详情</button></td></tr>
           </tbody></table></div>
           <div class="flex items-center justify-between mt-16">
             <div class="flex items-center gap-16">
@@ -604,8 +618,13 @@ h1,h2,h3,.metric-value,.big-num,.stat-value,.health-value{font-family:'Instrumen
 
     <!-- PAGE: Schedule -->
     <div class="page" id="page-schedule">
-      <h2 class="section-title">排班管理</h2>
-      <p class="section-subtitle">本周排班表 (2024年1月15日 - 1月21日)</p>
+      <div class="toolbar">
+        <div class="toolbar-left">
+          <h2 class="section-title" style="margin-bottom:0">排班管理</h2>
+          <span class="text-sm text-muted" style="margin-left:12px">本周排班表 (2024年1月15日 - 1月21日)</span>
+        </div>
+        <div class="toolbar-right"><button class="btn btn-primary btn-sm" onclick="openScheduleModal()">新增排班</button></div>
+      </div>
       <div class="schedule-grid">
         <div class="schedule-header-row"><div class="schedule-header-cell"></div><div class="schedule-header-cell">周一</div><div class="schedule-header-cell">周二</div><div class="schedule-header-cell">周三</div><div class="schedule-header-cell">周四</div><div class="schedule-header-cell">周五</div><div class="schedule-header-cell">周六</div><div class="schedule-header-cell">周日</div></div>
         <div class="schedule-row"><div class="schedule-time">09:00</div><div class="schedule-cell"><div class="shift" style="background:oklch(0.92 0.04 250);color:oklch(0.4 0.12 250)">李明</div></div><div class="schedule-cell"></div><div class="schedule-cell"><div class="shift" style="background:oklch(0.92 0.04 250);color:oklch(0.4 0.12 250)">李明</div></div><div class="schedule-cell"></div><div class="schedule-cell"><div class="shift" style="background:oklch(0.92 0.04 250);color:oklch(0.4 0.12 250)">李明</div></div><div class="schedule-cell"></div><div class="schedule-cell"></div></div>
@@ -624,11 +643,11 @@ h1,h2,h3,.metric-value,.big-num,.stat-value,.health-value{font-family:'Instrumen
       </div>
       <div class="mt-24">
         <h3 class="section-title">排班统计</h3>
-        <div class="table-wrap"><table class="data-table"><thead><tr><th>客服</th><th>本周工时</th><th>周一</th><th>周二</th><th>周三</th><th>周四</th><th>周五</th><th>周六</th><th>周日</th></tr></thead><tbody>
-          <tr><td>李明</td><td>30h</td><td>09-17</td><td>-</td><td>09-17</td><td>-</td><td>09-17</td><td>-</td><td>-</td></tr>
-          <tr><td>王芳</td><td>35h</td><td>13-19</td><td>10-15</td><td>13-19</td><td>10-15</td><td>13-19</td><td>-</td><td>-</td></tr>
-          <tr><td>张伟</td><td>25h</td><td>16-17</td><td>10-15</td><td>16-17</td><td>10-15</td><td>16-17</td><td>10-11</td><td>-</td></tr>
-          <tr><td>赵磊</td><td>15h</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+        <div class="table-wrap"><table class="data-table" id="schedule-table"><thead><tr><th>客服</th><th>本周工时</th><th>周一</th><th>周二</th><th>周三</th><th>周四</th><th>周五</th><th>周六</th><th>周日</th><th>操作</th></tr></thead><tbody>
+          <tr><td>李明</td><td>30h</td><td>09-17</td><td>-</td><td>09-17</td><td>-</td><td>09-17</td><td>-</td><td>-</td><td><button class="btn-link" onclick="editSchedule(this,'李明','周一','09:00-17:00')" style="margin-right:8px">编辑</button><button class="btn-link" onclick="viewScheduleDetail(this,'李明','30h','周一 09-17 / 周三 09-17 / 周五 09-17')">查看详情</button></td></tr>
+          <tr><td>王芳</td><td>35h</td><td>13-19</td><td>10-15</td><td>13-19</td><td>10-15</td><td>13-19</td><td>-</td><td>-</td><td><button class="btn-link" onclick="editSchedule(this,'王芳','周一','13:00-19:00')" style="margin-right:8px">编辑</button><button class="btn-link" onclick="viewScheduleDetail(this,'王芳','35h','周一 13-19 / 周二 10-15 / 周三 13-19 / 周四 10-15 / 周五 13-19')">查看详情</button></td></tr>
+          <tr><td>张伟</td><td>25h</td><td>16-17</td><td>10-15</td><td>16-17</td><td>10-15</td><td>16-17</td><td>10-11</td><td>-</td><td><button class="btn-link" onclick="editSchedule(this,'张伟','周二','10:00-15:00')" style="margin-right:8px">编辑</button><button class="btn-link" onclick="viewScheduleDetail(this,'张伟','25h','周一 16-17 / 周二 10-15 / 周三 16-17 / 周四 10-15 / 周五 16-17 / 周六 10-11')">查看详情</button></td></tr>
+          <tr><td>赵磊</td><td>15h</td><td>20-21</td><td>-</td><td>20-21</td><td>-</td><td>20-21</td><td>-</td><td>-</td><td><button class="btn-link" onclick="editSchedule(this,'赵磊','周一','20:00-21:00')" style="margin-right:8px">编辑</button><button class="btn-link" onclick="viewScheduleDetail(this,'赵磊','15h','周一 20-21 / 周三 20-21 / 周五 20-21')">查看详情</button></td></tr>
         </tbody></table></div>
       </div>
       <div class="mt-24">
@@ -865,16 +884,16 @@ h1,h2,h3,.metric-value,.big-num,.stat-value,.health-value{font-family:'Instrumen
       </div>
       <h3 class="section-title mt-24">知识缺口列表</h3>
       <div class="table-wrap"><table class="data-table"><thead><tr><th>问题</th><th>出现次数</th><th>最后出现</th><th>状态</th><th>操作</th></tr></thead><tbody>
-        <tr><td>产品是否支持 5G 网络？</td><td>47 次</td><td>2024-01-15</td><td><span class="badge badge-warning">待补充</span></td><td><button class="btn-link" onclick="showToast('已跳转至知识库')">去补充</button></td></tr>
-        <tr><td>海外发货运费如何计算？</td><td>32 次</td><td>2024-01-15</td><td><span class="badge badge-warning">待补充</span></td><td><button class="btn-link" onclick="showToast('已跳转至知识库')">去补充</button></td></tr>
-        <tr><td>企业批量采购是否有折扣？</td><td>28 次</td><td>2024-01-14</td><td><span class="badge badge-info">处理中</span></td><td><button class="btn-link" onclick="showToast('已跳转至知识库')">去补充</button></td></tr>
-        <tr><td>产品保修期内维修是否免费？</td><td>19 次</td><td>2024-01-14</td><td><span class="badge badge-success">已补充</span></td><td><button class="btn-link" onclick="showToast('查看详情')">查看</button></td></tr>
-        <tr><td>是否支持花呗分期？</td><td>15 次</td><td>2024-01-13</td><td><span class="badge badge-success">已补充</span></td><td><button class="btn-link" onclick="showToast('查看详情')">查看</button></td></tr>
-        <tr><td>产品是否防水？</td><td>12 次</td><td>2024-01-12</td><td><span class="badge badge-warning">待补充</span></td><td><button class="btn-link" onclick="showToast('已跳转至知识库')">去补充</button></td></tr>
-        <tr><td>可以指定快递吗？</td><td>10 次</td><td>2024-01-11</td><td><span class="badge badge-success">已补充</span></td><td><button class="btn-link" onclick="showToast('查看详情')">查看</button></td></tr>
-        <tr><td>赠品什么时候发？</td><td>8 次</td><td>2024-01-10</td><td><span class="badge badge-info">处理中</span></td><td><button class="btn-link" onclick="showToast('已跳转至知识库')">去补充</button></td></tr>
-        <tr><td>产品材质是什么？</td><td>7 次</td><td>2024-01-09</td><td><span class="badge badge-success">已补充</span></td><td><button class="btn-link" onclick="showToast('查看详情')">查看</button></td></tr>
-        <tr><td>如何申请开具电子发票？</td><td>6 次</td><td>2024-01-08</td><td><span class="badge badge-warning">待补充</span></td><td><button class="btn-link" onclick="showToast('已跳转至知识库')">去补充</button></td></tr>
+        <tr><td>产品是否支持 5G 网络？</td><td>47 次</td><td>2024-01-15</td><td><span class="badge badge-warning">待补充</span></td><td><button class="btn-link" onclick="openKbSupplement('产品是否支持 5G 网络？','','待补充')">去补充</button></td></tr>
+        <tr><td>海外发货运费如何计算？</td><td>32 次</td><td>2024-01-15</td><td><span class="badge badge-warning">待补充</span></td><td><button class="btn-link" onclick="openKbSupplement('海外发货运费如何计算？','','待补充')">去补充</button></td></tr>
+        <tr><td>企业批量采购是否有折扣？</td><td>28 次</td><td>2024-01-14</td><td><span class="badge badge-info">处理中</span></td><td><button class="btn-link" onclick="openKbSupplement('企业批量采购是否有折扣？','企业批量采购满50台可享受9折优惠，满100台可享受85折优惠。具体请联系商务部门洽谈。','处理中')">去补充</button></td></tr>
+        <tr><td>产品保修期内维修是否免费？</td><td>19 次</td><td>2024-01-14</td><td><span class="badge badge-success">已补充</span></td><td><button class="btn-link" onclick="openKbView('产品保修期内维修是否免费？','是的，产品在保修期内因非人为因素导致的故障，可享受免费维修服务。保修期为自签收之日起1年。')">查看</button></td></tr>
+        <tr><td>是否支持花呗分期？</td><td>15 次</td><td>2024-01-13</td><td><span class="badge badge-success">已补充</span></td><td><button class="btn-link" onclick="openKbView('是否支持花呗分期？','支持花呗分期付款。订单金额满300元可选择3期免息，满600元可选择6期免息，满1200元可选择12期免息。')">查看</button></td></tr>
+        <tr><td>产品是否防水？</td><td>12 次</td><td>2024-01-12</td><td><span class="badge badge-warning">待补充</span></td><td><button class="btn-link" onclick="openKbSupplement('产品是否防水？','','待补充')">去补充</button></td></tr>
+        <tr><td>可以指定快递吗？</td><td>10 次</td><td>2024-01-11</td><td><span class="badge badge-success">已补充</span></td><td><button class="btn-link" onclick="openKbView('可以指定快递吗？','支持指定快递。目前合作的快递有顺丰、中通、圆通、韵达。如需指定其他快递，请联系客服确认运费差异。')">查看</button></td></tr>
+        <tr><td>赠品什么时候发？</td><td>8 次</td><td>2024-01-10</td><td><span class="badge badge-info">处理中</span></td><td><button class="btn-link" onclick="openKbSupplement('赠品什么时候发？','赠品将在主商品发货后48小时内单独寄出，物流信息可在订单详情中查看。','处理中')">去补充</button></td></tr>
+        <tr><td>产品材质是什么？</td><td>7 次</td><td>2024-01-09</td><td><span class="badge badge-success">已补充</span></td><td><button class="btn-link" onclick="openKbView('产品材质是什么？','产品外壳采用航空级铝合金材质，屏幕使用康宁大猩猩玻璃，表带为医用级硅胶材质，亲肤舒适。')">查看</button></td></tr>
+        <tr><td>如何申请开具电子发票？</td><td>6 次</td><td>2024-01-08</td><td><span class="badge badge-warning">待补充</span></td><td><button class="btn-link" onclick="openKbSupplement('如何申请开具电子发票？','','待补充')">去补充</button></td></tr>
       </tbody></table></div>
     </div>
 
@@ -946,8 +965,31 @@ h1,h2,h3,.metric-value,.big-num,.stat-value,.health-value{font-family:'Instrumen
       <div class="flex items-center gap-8 mb-16">
         <div class="flex items-center gap-8"><span style="width:8px;height:8px;border-radius:50%;background:var(--success);display:inline-block"></span><span class="text-sm" style="color:var(--success);font-weight:500">AI分类引擎运行中</span></div>
       </div>
+      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:20px">
+        <div style="background:var(--white);border:1px solid var(--border);border-radius:8px;padding:16px;text-align:center">
+          <div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:4px">客诉总量</div>
+          <div style="font-size:24px;font-family:'Instrument Serif',Georgia,serif;color:var(--text)">156</div>
+        </div>
+        <div style="background:var(--white);border:1px solid var(--border);border-radius:8px;padding:16px;text-align:center">
+          <div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:4px">商品质量</div>
+          <div style="font-size:24px;font-family:'Instrument Serif',Georgia,serif;color:var(--danger)">42</div>
+        </div>
+        <div style="background:var(--white);border:1px solid var(--border);border-radius:8px;padding:16px;text-align:center">
+          <div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:4px">物流问题</div>
+          <div style="font-size:24px;font-family:'Instrument Serif',Georgia,serif;color:var(--warning)">38</div>
+        </div>
+        <div style="background:var(--white);border:1px solid var(--border);border-radius:8px;padding:16px;text-align:center">
+          <div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:4px">服务态度</div>
+          <div style="font-size:24px;font-family:'Instrument Serif',Georgia,serif;color:var(--primary)">35</div>
+        </div>
+        <div style="background:var(--white);border:1px solid var(--border);border-radius:8px;padding:16px;text-align:center">
+          <div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:4px">其他</div>
+          <div style="font-size:24px;font-family:'Instrument Serif',Georgia,serif;color:var(--muted)">41</div>
+        </div>
+      </div>
       <div class="toolbar">
         <div class="toolbar-left">
+          <div class="search-wrap"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="9" r="5.5"/><path d="M13.5 13.5L18 18"/></svg><input class="search-input" placeholder="搜索客诉内容..." id="complaint-search" oninput="filterComplaintTable()"></div>
           <select class="form-select" style="width:130px" onchange="filterComplaintTable()"><option value="">全部分类</option><option>商品质量</option><option>物流问题</option><option>服务态度</option><option>虚假宣传</option><option>价格争议</option></select>
           <select class="form-select" style="width:130px" onchange="filterComplaintTable()"><option value="">全部置信度</option><option value="high">>90%</option><option value="mid">70%-90%</option><option value="low"><70%</option></select>
           <select class="form-select" style="width:130px" onchange="filterComplaintTable()"><option value="">全部状态</option><option>待处理</option><option>已处理</option><option>处理中</option></select>
@@ -957,15 +999,15 @@ h1,h2,h3,.metric-value,.big-num,.stat-value,.health-value{font-family:'Instrumen
           <button class="btn btn-outline btn-sm" onclick="showToast('已重新分类低置信度客诉')">重新分类</button>
         </div>
       </div>
-      <div class="table-wrap"><table class="data-table" id="complaint-table"><thead><tr><th>投诉内容</th><th>AI分类</th><th>置信度</th><th>处理状态</th><th>操作</th></tr></thead><tbody>
-        <tr data-cat="商品质量" data-conf="high" data-status="待处理"><td>收到的商品有破损，屏幕有裂痕</td><td><span class="badge badge-danger">商品质量</span></td><td><span style="color:oklch(0.55 0.15 145);font-weight:600">96.2%</span></td><td><span class="badge badge-info">待处理</span></td><td><button class="btn-link" onclick="showToast('查看详情')">查看</button></td></tr>
-        <tr data-cat="物流问题" data-conf="high" data-status="已处理"><td>快递显示已签收但实际未收到</td><td><span class="badge badge-warning">物流问题</span></td><td><span style="color:oklch(0.55 0.15 145);font-weight:600">94.8%</span></td><td><span class="badge badge-success">已处理</span></td><td><button class="btn-link" onclick="showToast('查看详情')">查看</button></td></tr>
-        <tr data-cat="服务态度" data-conf="high" data-status="处理中"><td>客服回复速度太慢，态度不好</td><td><span class="badge badge-info">服务态度</span></td><td><span style="color:oklch(0.55 0.15 145);font-weight:600">92.1%</span></td><td><span class="badge badge-warning">处理中</span></td><td><button class="btn-link" onclick="showToast('查看详情')">查看</button></td></tr>
-        <tr data-cat="虚假宣传" data-conf="mid" data-status="待处理"><td>实际商品与页面描述严重不符</td><td><span class="badge badge-muted">虚假宣传</span></td><td><span style="color:oklch(0.6 0.15 80);font-weight:600">85.3%</span></td><td><span class="badge badge-info">待处理</span></td><td><button class="btn-link" onclick="showToast('查看详情')">查看</button></td></tr>
-        <tr data-cat="价格争议" data-conf="mid" data-status="待处理"><td>刚买就降价了，要求补差价</td><td><span class="badge" style="background:oklch(0.94 0.03 300);color:oklch(0.45 0.12 300)">价格争议</span></td><td><span style="color:oklch(0.6 0.15 80);font-weight:600">82.7%</span></td><td><span class="badge badge-info">待处理</span></td><td><button class="btn-link" onclick="showToast('查看详情')">查看</button></td></tr>
-        <tr data-cat="商品质量" data-conf="mid" data-status="处理中"><td>使用一周后出现电池鼓包问题</td><td><span class="badge badge-danger">商品质量</span></td><td><span style="color:oklch(0.6 0.15 80);font-weight:600">78.4%</span></td><td><span class="badge badge-warning">处理中</span></td><td><button class="btn-link" onclick="showToast('查看详情')">查看</button></td></tr>
-        <tr data-cat="物流问题" data-conf="low" data-status="待处理"><td>物流信息三天没有更新了</td><td><span class="badge badge-warning">物流问题</span></td><td><span style="color:oklch(0.6 0.2 25);font-weight:600">65.2%</span></td><td><span class="badge badge-info">待处理</span></td><td><button class="btn-link" onclick="showToast('查看详情')">查看</button></td></tr>
-        <tr data-cat="服务态度" data-conf="low" data-status="待处理"><td>多次联系客服未得到有效解决</td><td><span class="badge badge-info">服务态度</span></td><td><span style="color:oklch(0.6 0.2 25);font-weight:600">58.9%</span></td><td><span class="badge badge-info">待处理</span></td><td><button class="btn-link" onclick="showToast('查看详情')">查看</button></td></tr>
+      <div class="table-wrap"><table class="data-table" id="complaint-table"><thead><tr><th>投诉内容</th><th>AI分类</th><th>置信度</th><th>人工确认</th><th>处理状态</th><th>操作</th></tr></thead><tbody>
+        <tr data-cat="商品质量" data-conf="high" data-status="待处理"><td>收到的商品有破损，屏幕有裂痕</td><td><span class="badge badge-danger">商品质量</span></td><td><span style="color:oklch(0.55 0.15 145);font-weight:600">96.2%</span></td><td><span class="badge badge-success">已确认</span></td><td><span class="badge badge-info">待处理</span></td><td><button class="btn-link" onclick="openComplaintDetail(this,'收到的商品有破损，屏幕有裂痕','商品质量','96.2%','已确认','待处理')">查看</button></td></tr>
+        <tr data-cat="物流问题" data-conf="high" data-status="已处理"><td>快递显示已签收但实际未收到</td><td><span class="badge badge-warning">物流问题</span></td><td><span style="color:oklch(0.55 0.15 145);font-weight:600">94.8%</span></td><td><span class="badge badge-success">已确认</span></td><td><span class="badge badge-success">已处理</span></td><td><button class="btn-link" onclick="openComplaintDetail(this,'快递显示已签收但实际未收到','物流问题','94.8%','已确认','已处理')">查看</button></td></tr>
+        <tr data-cat="服务态度" data-conf="high" data-status="处理中"><td>客服回复速度太慢，态度不好</td><td><span class="badge badge-info">服务态度</span></td><td><span style="color:oklch(0.55 0.15 145);font-weight:600">92.1%</span></td><td><span class="badge badge-success">已确认</span></td><td><span class="badge badge-warning">处理中</span></td><td><button class="btn-link" onclick="openComplaintDetail(this,'客服回复速度太慢，态度不好','服务态度','92.1%','已确认','处理中')">查看</button></td></tr>
+        <tr data-cat="虚假宣传" data-conf="mid" data-status="待处理"><td>实际商品与页面描述严重不符</td><td><span class="badge badge-muted">虚假宣传</span></td><td><span style="color:oklch(0.6 0.15 80);font-weight:600">85.3%</span></td><td><span class="badge badge-warning">待确认</span></td><td><span class="badge badge-info">待处理</span></td><td><button class="btn-link" onclick="openComplaintDetail(this,'实际商品与页面描述严重不符','虚假宣传','85.3%','待确认','待处理')">查看</button></td></tr>
+        <tr data-cat="价格争议" data-conf="mid" data-status="待处理"><td>刚买就降价了，要求补差价</td><td><span class="badge" style="background:oklch(0.94 0.03 300);color:oklch(0.45 0.12 300)">价格争议</span></td><td><span style="color:oklch(0.6 0.15 80);font-weight:600">82.7%</span></td><td><span class="badge badge-warning">待确认</span></td><td><span class="badge badge-info">待处理</span></td><td><button class="btn-link" onclick="openComplaintDetail(this,'刚买就降价了，要求补差价','价格争议','82.7%','待确认','待处理')">查看</button></td></tr>
+        <tr data-cat="商品质量" data-conf="mid" data-status="处理中"><td>使用一周后出现电池鼓包问题</td><td><span class="badge badge-danger">商品质量</span></td><td><span style="color:oklch(0.6 0.15 80);font-weight:600">78.4%</span></td><td><span class="badge badge-warning">待确认</span></td><td><span class="badge badge-warning">处理中</span></td><td><button class="btn-link" onclick="openComplaintDetail(this,'使用一周后出现电池鼓包问题','商品质量','78.4%','待确认','处理中')">查看</button></td></tr>
+        <tr data-cat="物流问题" data-conf="low" data-status="待处理"><td>物流信息三天没有更新了</td><td><span class="badge badge-warning">物流问题</span></td><td><span style="color:oklch(0.6 0.2 25);font-weight:600">65.2%</span></td><td><span class="badge badge-danger">存疑</span></td><td><span class="badge badge-info">待处理</span></td><td><button class="btn-link" onclick="openComplaintDetail(this,'物流信息三天没有更新了','物流问题','65.2%','存疑','待处理')">查看</button></td></tr>
+        <tr data-cat="服务态度" data-conf="low" data-status="待处理"><td>多次联系客服未得到有效解决</td><td><span class="badge badge-info">服务态度</span></td><td><span style="color:oklch(0.6 0.2 25);font-weight:600">58.9%</span></td><td><span class="badge badge-danger">存疑</span></td><td><span class="badge badge-info">待处理</span></td><td><button class="btn-link" onclick="openComplaintDetail(this,'多次联系客服未得到有效解决','服务态度','58.9%','存疑','待处理')">查看</button></td></tr>
       </tbody></table></div>
     </div>
 
@@ -979,27 +1021,42 @@ h1,h2,h3,.metric-value,.big-num,.stat-value,.health-value{font-family:'Instrumen
           <button class="btn btn-primary btn-sm" onclick="openModal('addStoreModal')">添加店铺</button>
         </div>
       </div>
-      <div class="table-wrap"><table class="data-table"><thead><tr><th>店铺名称</th><th>状态</th><th>最后同步</th><th>同步状态</th><th>操作</th></tr></thead><tbody>
+      <div class="metrics-grid" style="grid-template-columns:repeat(4,1fr)">
+        <div class="metric-row"><div class="metric-label">店铺总数</div><div class="metric-value display">3</div></div>
+        <div class="metric-row"><div class="metric-label">在线店铺</div><div class="metric-value display" style="color:var(--success)">2</div></div>
+        <div class="metric-row"><div class="metric-label">总客服数</div><div class="metric-value display">18</div></div>
+        <div class="metric-row"><div class="metric-label">今日总对话量</div><div class="metric-value display">1,456</div></div>
+      </div>
+      <div class="table-wrap mt-16"><table class="data-table"><thead><tr><th>店铺名称</th><th>平台</th><th>状态</th><th>客服数</th><th>今日对话量</th><th>最后同步</th><th>同步状态</th><th>操作</th></tr></thead><tbody>
         <tr>
           <td><div class="font-medium">旗舰店</div><div class="text-xs text-muted">SHOP-20240001</div></td>
+          <td><span class="badge badge-info">淘宝</span></td>
           <td><div class="toggle active" onclick="this.classList.toggle('active');showToast(this.classList.contains('active')?'已启用':'已禁用')"></div></td>
+          <td>8</td>
+          <td>687</td>
           <td>2026-04-13 14:30</td>
           <td><span class="badge badge-success">已同步</span></td>
-          <td><button class="btn-link" onclick="showToast('编辑店铺配置')">配置</button></td>
+          <td><button class="btn-link" onclick="showToast('编辑店铺配置')" style="margin-right:8px">配置</button><button class="btn-link" onclick="openStoreDetail('旗舰店','淘宝','8','687')">查看详情</button></td>
         </tr>
         <tr>
           <td><div class="font-medium">海外专营店</div><div class="text-xs text-muted">SHOP-20240002</div></td>
+          <td><span class="badge badge-warning">京东</span></td>
           <td><div class="toggle active" onclick="this.classList.toggle('active');showToast(this.classList.contains('active')?'已启用':'已禁用')"></div></td>
+          <td>6</td>
+          <td>523</td>
           <td>2026-04-13 12:15</td>
           <td><span class="badge badge-success">已同步</span></td>
-          <td><button class="btn-link" onclick="showToast('编辑店铺配置')">配置</button></td>
+          <td><button class="btn-link" onclick="showToast('编辑店铺配置')" style="margin-right:8px">配置</button><button class="btn-link" onclick="openStoreDetail('海外专营店','京东','6','523')">查看详情</button></td>
         </tr>
         <tr>
           <td><div class="font-medium">折扣店</div><div class="text-xs text-muted">SHOP-20240003</div></td>
+          <td><span class="badge badge-danger">拼多多</span></td>
           <td><div class="toggle" onclick="this.classList.toggle('active');showToast(this.classList.contains('active')?'已启用':'已禁用')"></div></td>
+          <td>4</td>
+          <td>246</td>
           <td>2026-04-12 09:45</td>
           <td><span class="badge badge-warning">同步中</span></td>
-          <td><button class="btn-link" onclick="showToast('编辑店铺配置')">配置</button></td>
+          <td><button class="btn-link" onclick="showToast('编辑店铺配置')" style="margin-right:8px">配置</button><button class="btn-link" onclick="openStoreDetail('折扣店','拼多多','4','246')">查看详情</button></td>
         </tr>
       </tbody></table></div>
     </div>
@@ -1007,10 +1064,11 @@ h1,h2,h3,.metric-value,.big-num,.stat-value,.health-value{font-family:'Instrumen
     <!-- PAGE: Training Data (M-006) -->
     <div class="page" id="page-training-data">
       <h2 class="section-title">AI训练数据管理</h2>
-      <div class="metrics-grid" style="grid-template-columns:repeat(3,1fr)">
+      <div class="metrics-grid" style="grid-template-columns:repeat(4,1fr)">
         <div class="metric-row"><div class="metric-label">总数据量</div><div class="metric-value display">12,345<span class="text-sm text-muted" style="font-family:'Noto Sans SC'">条</span></div></div>
         <div class="metric-row"><div class="metric-label">已标注</div><div class="metric-value display" style="color:var(--success)">8,567<span class="text-sm text-muted" style="font-family:'Noto Sans SC'">条</span></div></div>
         <div class="metric-row"><div class="metric-label">待标注</div><div class="metric-value display" style="color:var(--warning)">3,778<span class="text-sm text-muted" style="font-family:'Noto Sans SC'">条</span></div></div>
+        <div class="metric-row"><div class="metric-label">准确率</div><div class="metric-value display" style="color:var(--primary)">94.2%</div><div class="metric-change up">+1.8% 较上月</div></div>
       </div>
       <div class="flex items-center justify-between mt-16 mb-16">
         <div class="flex items-center gap-8">
@@ -1021,6 +1079,7 @@ h1,h2,h3,.metric-value,.big-num,.stat-value,.health-value{font-family:'Instrumen
       </div>
       <div class="toolbar">
         <div class="toolbar-left">
+          <div class="search-wrap"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="9" r="5.5"/><path d="M13.5 13.5L18 18"/></svg><input class="search-input" placeholder="搜索训练数据..." id="training-search" oninput="filterTrainingTable()"></div>
           <select class="form-select" style="width:120px" onchange="filterTrainingTable()"><option value="">全部来源</option><option>客服会话</option><option>用户反馈</option><option>工单记录</option><option>知识库</option></select>
           <select class="form-select" style="width:120px" onchange="filterTrainingTable()"><option value="">全部类型</option><option>问答对</option><option>意图分类</option><option>情感标注</option></select>
           <select class="form-select" style="width:120px" onchange="filterTrainingTable()"><option value="">全部状态</option><option>已标注</option><option>待标注</option><option>审核中</option></select>
@@ -1100,7 +1159,18 @@ h1,h2,h3,.metric-value,.big-num,.stat-value,.health-value{font-family:'Instrumen
         <div class="chart-box"><h3>客诉类型分布</h3><canvas id="complaint-doughnut-chart"></canvas></div>
       </div>
       <div class="mt-24">
-        <h3 class="section-title">客诉排行</h3>
+        <h3 class="section-title">客诉处理效率</h3>
+        <div class="table-wrap"><table class="data-table"><thead><tr><th>处理环节</th><th>平均耗时</th><th>目标耗时</th><th>达标率</th><th>趋势</th></tr></thead><tbody>
+          <tr><td>客诉受理</td><td>0.5 小时</td><td>1 小时</td><td><span class="badge badge-success">98%</span></td><td><span class="metric-change up">-12%</span></td></tr>
+          <tr><td>问题分类</td><td>0.8 小时</td><td>1 小时</td><td><span class="badge badge-success">92%</span></td><td><span class="metric-change up">-5%</span></td></tr>
+          <tr><td>方案制定</td><td>1.5 小时</td><td>2 小时</td><td><span class="badge badge-success">88%</span></td><td><span class="metric-change down">+3%</span></td></tr>
+          <tr><td>客户沟通</td><td>1.2 小时</td><td>2 小时</td><td><span class="badge badge-success">95%</span></td><td><span class="metric-change up">-8%</span></td></tr>
+          <tr><td>方案执行</td><td>2.8 小时</td><td>3 小时</td><td><span class="badge badge-warning">76%</span></td><td><span class="metric-change down">+5%</span></td></tr>
+          <tr><td>客户回访</td><td>0.6 小时</td><td>1 小时</td><td><span class="badge badge-success">91%</span></td><td><span class="metric-change up">-2%</span></td></tr>
+        </tbody></table></div>
+      </div>
+      <div class="mt-24">
+        <h3 class="section-title">热门客诉问题</h3>
         <div class="table-wrap"><table class="data-table"><thead><tr><th>排名</th><th>客诉内容</th><th>次数</th><th>趋势</th><th>状态</th></tr></thead><tbody>
           <tr><td>1</td><td>商品质量问题 (屏幕/电池/外观)</td><td>89</td><td><span class="metric-change down"><svg viewBox="0 0 12 12" width="10" height="10" style="vertical-align:middle;margin-right:2px"><path d="M6 10l4-5H2z" fill="oklch(0.6 0.2 25)"/></svg>上升</span></td><td><span class="badge badge-warning">跟进中</span></td></tr>
           <tr><td>2</td><td>物流配送延迟</td><td>67</td><td><span class="metric-change up"><svg viewBox="0 0 12 12" width="10" height="10" style="vertical-align:middle;margin-right:2px"><path d="M6 2l4 5H2z" fill="oklch(0.65 0.15 145)"/></svg>下降</span></td><td><span class="badge badge-success">已改善</span></td></tr>
@@ -1160,6 +1230,50 @@ h1,h2,h3,.metric-value,.big-num,.stat-value,.health-value{font-family:'Instrumen
     <div class="detail-field"><div class="label">检查会话列表</div><div class="value">会话 #8921, #8922, #8923, #8924, #8925 (共 5 个样本)</div></div>
     <div class="detail-field"><div class="label">质检员备注</div><div class="value">整体表现良好，建议在产品规格类问题上加强学习。可以参考李明的优秀会话案例。</div></div>
     <div class="detail-field"><div class="label">被检人反馈</div><div class="value">已阅读质检报告，认可评分结果，会根据建议改进。</div></div>
+  </div>
+</div>
+
+<!-- Store Detail Modal -->
+<div class="modal-overlay" id="storeDetailModal" role="dialog" aria-modal="true" aria-labelledby="storeDetailModal-title">
+  <div class="modal-panel" onclick="event.stopPropagation()">
+    <div class="modal-header"><h3 id="storeDetailModal-title">店铺详情</h3><button class="modal-close" aria-label="关闭" onclick="closeModal('storeDetailModal')"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 5l10 10M15 5L5 15"/></svg></button></div>
+    <div class="modal-body">
+      <div class="detail-field"><div class="label">店铺名称</div><div class="value" id="sd-name"></div></div>
+      <div class="detail-field"><div class="label">平台</div><div class="value" id="sd-platform"></div></div>
+      <div class="detail-field"><div class="label">客服数量</div><div class="value" id="sd-staff"></div></div>
+      <div class="detail-field"><div class="label">今日对话量</div><div class="value" id="sd-sessions"></div></div>
+      <div class="detail-field"><div class="label">知识库同步</div><div class="value"><span class="badge badge-success">已同步</span></div></div>
+      <div class="detail-field"><div class="label">话术同步</div><div class="value"><span class="badge badge-success">已同步</span></div></div>
+      <div class="detail-field"><div class="label">AI参数同步</div><div class="value"><span class="badge badge-muted">未同步</span></div></div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-outline" onclick="closeModal('storeDetailModal')">关闭</button><button class="btn btn-primary" onclick="closeModal('storeDetailModal');showToast('编辑店铺配置')">编辑配置</button></div>
+  </div>
+</div>
+
+<!-- KB Supplement Modal (知识库补充) -->
+<div class="modal-overlay" id="kbSupplementModal" role="dialog" aria-modal="true" aria-labelledby="kbSupplementModal-title">
+  <div class="modal-panel" onclick="event.stopPropagation()">
+    <div class="modal-header"><h3 id="kbSupplementModal-title">补充知识库答案</h3><button class="modal-close" aria-label="关闭" onclick="closeModal('kbSupplementModal')"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 5l10 10M15 5L5 15"/></svg></button></div>
+    <div class="modal-body">
+      <div class="form-group"><label class="form-label">问题内容</label><div id="kb-supplement-question" style="padding:10px 12px;background:var(--surface);border-radius:6px;font-size:13px;color:var(--text);border:1px solid var(--border)"></div></div>
+      <div class="form-group"><label class="form-label">当前知识库答案</label><div id="kb-supplement-current" style="padding:10px 12px;background:var(--surface);border-radius:6px;font-size:13px;color:var(--text-sec);min-height:40px;border:1px solid var(--border)"></div></div>
+      <div class="form-group"><label class="form-label">编辑答案</label><textarea class="form-textarea" id="kb-supplement-answer" placeholder="请输入或修改知识库答案..." style="min-height:120px"></textarea></div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-outline" onclick="closeModal('kbSupplementModal')">取消</button><button class="btn btn-primary" onclick="saveKbSupplement()">保存</button></div>
+  </div>
+</div>
+
+<!-- KB View Modal (知识库查看) -->
+<div class="modal-overlay" id="kbViewModal" role="dialog" aria-modal="true" aria-labelledby="kbViewModal-title">
+  <div class="modal-panel" onclick="event.stopPropagation()">
+    <div class="modal-header"><h3 id="kbViewModal-title">知识库详情</h3><button class="modal-close" aria-label="关闭" onclick="closeModal('kbViewModal')"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 5l10 10M15 5L5 15"/></svg></button></div>
+    <div class="modal-body">
+      <div class="detail-field"><div class="label">问题</div><div class="value" id="kb-view-question" style="font-weight:500"></div></div>
+      <div class="detail-field"><div class="label">答案</div><div class="value" id="kb-view-answer"></div></div>
+      <div class="detail-field"><div class="label">状态</div><div class="value"><span class="badge badge-success">已补充</span></div></div>
+      <div class="detail-field"><div class="label">命中次数</div><div class="value" id="kb-view-hits"></div></div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-outline" onclick="closeModal('kbViewModal')">关闭</button></div>
   </div>
 </div>
 
@@ -1351,6 +1465,64 @@ h1,h2,h3,.metric-value,.big-num,.stat-value,.health-value{font-family:'Instrumen
 <!-- Toast Container -->
 <div id="toast-container"></div>
 
+<!-- QA Detail Modal -->
+<div class="modal-overlay" id="qaDetailModal" role="dialog" aria-modal="true">
+  <div class="modal-panel" onclick="event.stopPropagation()">
+    <div class="modal-header"><h3>QA详情</h3><button class="modal-close" aria-label="关闭" onclick="closeModal('qaDetailModal')"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 5l10 10M15 5L5 15"/></svg></button></div>
+    <div class="modal-body">
+      <div class="detail-field"><div class="label">问题</div><div class="value" id="qa-detail-question"></div></div>
+      <div class="detail-field"><div class="label">AI回答</div><div class="value" id="qa-detail-answer"></div></div>
+      <div class="detail-field"><div class="label">来源</div><div class="value" id="qa-detail-source"></div></div>
+      <div class="detail-field"><div class="label">答案验证</div><div class="value" id="qa-detail-verify"></div></div>
+      <div class="detail-field"><div class="label">置信度</div><div class="value" id="qa-detail-confidence"></div></div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-outline" onclick="closeModal('qaDetailModal')">关闭</button></div>
+  </div>
+</div>
+
+<!-- Complaint Detail Modal -->
+<div class="modal-overlay" id="complaintDetailModal" role="dialog" aria-modal="true">
+  <div class="modal-panel" onclick="event.stopPropagation()">
+    <div class="modal-header"><h3>客诉详情</h3><button class="modal-close" aria-label="关闭" onclick="closeModal('complaintDetailModal')"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 5l10 10M15 5L5 15"/></svg></button></div>
+    <div class="modal-body">
+      <div class="detail-field"><div class="label">投诉内容</div><div class="value" id="complaint-detail-content"></div></div>
+      <div class="detail-field"><div class="label">AI分类</div><div class="value" id="complaint-detail-category"></div></div>
+      <div class="detail-field"><div class="label">置信度</div><div class="value" id="complaint-detail-confidence"></div></div>
+      <div class="detail-field"><div class="label">人工确认</div><div class="value" id="complaint-detail-confirm"></div></div>
+      <div class="detail-field"><div class="label">处理状态</div><div class="value" id="complaint-detail-status"></div></div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-outline" onclick="closeModal('complaintDetailModal')">关闭</button></div>
+  </div>
+</div>
+
+<!-- Schedule Modal (Add/Edit) -->
+<div class="modal-overlay" id="scheduleModal" role="dialog" aria-modal="true">
+  <div class="modal-panel" onclick="event.stopPropagation()">
+    <div class="modal-header"><h3 id="scheduleModal-title">新增排班</h3><button class="modal-close" aria-label="关闭" onclick="closeModal('scheduleModal')"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 5l10 10M15 5L5 15"/></svg></button></div>
+    <div class="modal-body">
+      <div class="form-group"><label class="form-label">客服人员</label><select class="form-select" id="sch-staff"><option value="">请选择客服人员</option><option>李明</option><option>王芳</option><option>张伟</option><option>赵磊</option><option>周强</option><option>孙婷</option></select><div class="form-error">请选择客服人员</div></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">日期</label><select class="form-select" id="sch-day"><option value="">请选择日期</option><option>周一</option><option>周二</option><option>周三</option><option>周四</option><option>周五</option><option>周六</option><option>周日</option></select><div class="form-error">请选择日期</div></div>
+        <div class="form-group"><label class="form-label">时段</label><select class="form-select" id="sch-shift"><option value="">请选择时段</option><option>09:00-12:00</option><option>10:00-15:00</option><option>13:00-19:00</option><option>16:00-18:00</option><option>20:00-22:00</option></select><div class="form-error">请选择时段</div></div>
+      </div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-outline" onclick="closeModal('scheduleModal')">取消</button><button class="btn btn-primary" onclick="submitSchedule()">保存</button></div>
+  </div>
+</div>
+
+<!-- Schedule Detail Modal -->
+<div class="modal-overlay" id="scheduleDetailModal" role="dialog" aria-modal="true">
+  <div class="modal-panel" onclick="event.stopPropagation()">
+    <div class="modal-header"><h3>排班详情</h3><button class="modal-close" aria-label="关闭" onclick="closeModal('scheduleDetailModal')"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 5l10 10M15 5L5 15"/></svg></button></div>
+    <div class="modal-body">
+      <div class="detail-field"><div class="label">客服人员</div><div class="value" id="sch-detail-staff"></div></div>
+      <div class="detail-field"><div class="label">本周工时</div><div class="value" id="sch-detail-hours"></div></div>
+      <div class="detail-field"><div class="label">排班时段</div><div class="value" id="sch-detail-shifts"></div></div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-outline" onclick="closeModal('scheduleDetailModal')">关闭</button></div>
+  </div>
+</div>
+
 <script>
 /* ═══════════════════════════════════════════
    PAGE TITLES MAP
@@ -1446,7 +1618,22 @@ function validateField(inputId) {
    ═══════════════════════════════════════════ */
 function submitKnowledge() {
   let ok = validateField('km-title') & validateField('km-cat') & validateField('km-content');
-  if (ok) { closeModal('knowledgeModal'); showToast('知识条目已添加'); }
+  if (ok) { closeModal('knowledgeModal'); showToast('知识条目已保存'); }
+}
+function editKnowledge(btn, title, cat, status) {
+  document.getElementById('knowledgeModal-title').textContent = '编辑知识条目';
+  document.getElementById('km-title').value = title;
+  document.getElementById('km-cat').value = cat;
+  document.getElementById('km-content').value = '';
+  openModal('knowledgeModal');
+}
+function openQADetail(btn, question, answer, source, verify, confidence) {
+  document.getElementById('qa-detail-question').textContent = question;
+  document.getElementById('qa-detail-answer').textContent = answer;
+  document.getElementById('qa-detail-source').textContent = source;
+  document.getElementById('qa-detail-verify').innerHTML = verify === '正确' ? '<span class="badge badge-success">正确</span>' : '<span class="badge badge-danger">存疑</span>';
+  document.getElementById('qa-detail-confidence').textContent = confidence;
+  openModal('qaDetailModal');
 }
 function submitTicket() {
   let ok = validateField('tk-type') & validateField('tk-title') & validateField('tk-desc') & validateField('tk-priority');
@@ -1546,6 +1733,10 @@ function sendChat() {
     container.innerHTML += '<div class="chat-msg user"><div class="chat-avatar user">客</div><div class="chat-bubble">' + reply + '</div></div>';
     container.scrollTop = container.scrollHeight;
   }, 800);
+}
+function fillAIReply(btn) {
+  document.getElementById('chat-input').value = btn.textContent;
+  document.getElementById('chat-input').focus();
 }
 
 /* ═══════════════════════════════════════════
@@ -2335,31 +2526,52 @@ function unbindActivity(btn) {
    ═══════════════════════════════════════════ */
 function filterComplaintTable() {
   const selects = document.querySelectorAll('#page-complaint-classify .toolbar-left select');
-  const catFilter = selects[0].value;
-  const confFilter = selects[1].value;
-  const statusFilter = selects[2].value;
+  const catFilter = selects[0] ? selects[0].value : '';
+  const confFilter = selects[1] ? selects[1].value : '';
+  const statusFilter = selects[2] ? selects[2].value : '';
+  const searchInput = document.getElementById('complaint-search');
+  const searchText = searchInput ? searchInput.value.trim().toLowerCase() : '';
   document.querySelectorAll('#complaint-table tbody tr').forEach(r => {
+    const text = r.textContent.toLowerCase();
     const matchCat = !catFilter || r.dataset.cat === catFilter;
     const matchConf = !confFilter || r.dataset.conf === confFilter;
     const matchStatus = !statusFilter || r.dataset.status === statusFilter;
-    r.style.display = matchCat && matchConf && matchStatus ? '' : 'none';
+    const matchSearch = !searchText || text.includes(searchText);
+    r.style.display = matchCat && matchConf && matchStatus && matchSearch ? '' : 'none';
   });
+}
+function openComplaintDetail(btn, content, category, confidence, confirm, status) {
+  document.getElementById('complaint-detail-content').textContent = content;
+  document.getElementById('complaint-detail-category').textContent = category;
+  document.getElementById('complaint-detail-confidence').textContent = confidence;
+  const confirmEl = document.getElementById('complaint-detail-confirm');
+  if (confirm === '已确认') confirmEl.innerHTML = '<span class="badge badge-success">已确认</span>';
+  else if (confirm === '存疑') confirmEl.innerHTML = '<span class="badge badge-danger">存疑</span>';
+  else confirmEl.innerHTML = '<span class="badge badge-warning">待确认</span>';
+  const statusEl = document.getElementById('complaint-detail-status');
+  if (status === '已处理') statusEl.innerHTML = '<span class="badge badge-success">已处理</span>';
+  else if (status === '处理中') statusEl.innerHTML = '<span class="badge badge-warning">处理中</span>';
+  else statusEl.innerHTML = '<span class="badge badge-info">待处理</span>';
+  openModal('complaintDetailModal');
 }
 
 /* ═══════════════════════════════════════════
    M-006: Training table filter
    ═══════════════════════════════════════════ */
 function filterTrainingTable() {
+  const searchEl = document.getElementById('training-search');
+  const searchQ = searchEl ? searchEl.value.toLowerCase() : '';
   const selects = document.querySelectorAll('#page-training-data .toolbar-left select');
-  const sourceFilter = selects[0].value;
-  const typeFilter = selects[1].value;
-  const statusFilter = selects[2].value;
+  const sourceFilter = selects[0] ? selects[0].value : '';
+  const typeFilter = selects[1] ? selects[1].value : '';
+  const statusFilter = selects[2] ? selects[2].value : '';
   document.querySelectorAll('#training-table tbody tr').forEach(r => {
-    const text = r.textContent;
+    const text = r.textContent.toLowerCase();
+    const matchSearch = !searchQ || text.includes(searchQ);
     const matchSource = !sourceFilter || text.includes(sourceFilter);
     const matchType = !typeFilter || text.includes(typeFilter);
     const matchStatus = !statusFilter || text.includes(statusFilter);
-    r.style.display = matchSource && matchType && matchStatus ? '' : 'none';
+    r.style.display = matchSearch && matchSource && matchType && matchStatus ? '' : 'none';
   });
 }
 
@@ -2372,11 +2584,68 @@ function submitAddStore() {
 }
 
 /* ═══════════════════════════════════════════
+   KB MONITOR: Supplement and View modals
+   ═══════════════════════════════════════════ */
+function openKbSupplement(question, currentAnswer, status) {
+  document.getElementById('kb-supplement-question').textContent = question;
+  document.getElementById('kb-supplement-current').textContent = currentAnswer || '暂无答案';
+  document.getElementById('kb-supplement-answer').value = currentAnswer || '';
+  openModal('kbSupplementModal');
+}
+function openKbView(question, answer) {
+  document.getElementById('kb-view-question').textContent = question;
+  document.getElementById('kb-view-answer').textContent = answer;
+  document.getElementById('kb-view-hits').textContent = Math.floor(Math.random() * 50 + 10) + ' 次';
+  openModal('kbViewModal');
+}
+function saveKbSupplement() {
+  const answer = document.getElementById('kb-supplement-answer').value.trim();
+  if (!answer) { showToast('请输入答案', 'warning'); return; }
+  closeModal('kbSupplementModal');
+  showToast('知识库答案已保存');
+}
+
+/* ═══════════════════════════════════════════
+   MULTI-STORE: Store detail modal
+   ═══════════════════════════════════════════ */
+function openStoreDetail(name, platform, staff, sessions) {
+  document.getElementById('sd-name').textContent = name;
+  document.getElementById('sd-platform').textContent = platform;
+  document.getElementById('sd-staff').textContent = staff + ' 人';
+  document.getElementById('sd-sessions').textContent = sessions + ' 条';
+  openModal('storeDetailModal');
+}
+
+/* ═══════════════════════════════════════════
    M-007: Add route submission
    ═══════════════════════════════════════════ */
 function submitRoute() {
   let ok = validateField('route-name') & validateField('route-cond-type') & validateField('route-cond-val') & validateField('route-priority');
   if (ok) { closeModal('addRouteModal'); showToast('路由规则已创建'); }
+}
+
+/* ═══════════════════════════════════════════
+   SCHEDULE: Add/Edit/Detail
+   ═══════════════════════════════════════════ */
+function openScheduleModal(staff, day, shift) {
+  document.getElementById('scheduleModal-title').textContent = staff ? '编辑排班' : '新增排班';
+  document.getElementById('sch-staff').value = staff || '';
+  document.getElementById('sch-day').value = day || '';
+  document.getElementById('sch-shift').value = shift || '';
+  openModal('scheduleModal');
+}
+function editSchedule(btn, staff, day, shift) {
+  openScheduleModal(staff, day, shift);
+}
+function viewScheduleDetail(btn, staff, hours, shifts) {
+  document.getElementById('sch-detail-staff').textContent = staff;
+  document.getElementById('sch-detail-hours').textContent = hours;
+  document.getElementById('sch-detail-shifts').textContent = shifts;
+  openModal('scheduleDetailModal');
+}
+function submitSchedule() {
+  let ok = validateField('sch-staff') & validateField('sch-day') & validateField('sch-shift');
+  if (ok) { closeModal('scheduleModal'); showToast('排班已保存'); }
 }
 
 /* ═══════════════════════════════════════════
