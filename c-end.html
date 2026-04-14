@@ -1,0 +1,2981 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no,viewport-fit=cover">
+<title>AI智能客服 - C端用户</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ===== RESET ===== */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+a{text-decoration:none;color:inherit}
+input,textarea,select,button{font-family:inherit;font-size:inherit;outline:none;border:none;background:none}
+ul,ol{list-style:none}
+img{display:block;max-width:100%}
+
+/* ===== DESIGN TOKENS ===== */
+:root{
+  /* Colors — oklch palette */
+  --c-primary:oklch(0.55 0.18 15);
+  --c-primary-light:oklch(0.65 0.16 15);
+  --c-primary-pale:oklch(0.95 0.04 15);
+  --c-surface:oklch(0.98 0.005 80);
+  --c-surface-raised:oklch(0.995 0.002 80);
+  --c-text:oklch(0.15 0.02 60);
+  --c-text-secondary:oklch(0.35 0.02 60);
+  --c-muted:oklch(0.55 0.02 60);
+  --c-accent:oklch(0.7 0.15 55);
+  --c-accent-light:oklch(0.85 0.08 55);
+  --c-border:oklch(0.92 0.01 60);
+  --c-border-warm:oklch(0.90 0.02 60);
+  --c-success:oklch(0.6 0.15 145);
+  --c-error:oklch(0.55 0.2 25);
+  --c-overlay:oklch(0.15 0.02 60 / 0.4);
+  --c-white:oklch(1 0 0);
+
+  /* 4pt spacing scale */
+  --sp-1:4px;--sp-2:8px;--sp-3:12px;--sp-4:16px;--sp-6:24px;--sp-8:32px;--sp-12:48px;--sp-16:64px;
+
+  /* Modular type scale — 1.3 ratio */
+  --t-xs:12px;--t-sm:15.6px;--t-base:20.3px;--t-md:26.4px;--t-lg:34.3px;--t-xl:44.6px;
+
+  /* Layout */
+  --app-max:430px;
+  --header-h:56px;
+  --tab-h:56px;
+  --safe-t:env(safe-area-inset-top,0px);
+  --safe-b:env(safe-area-inset-bottom,0px);
+  --safe-l:env(safe-area-inset-left,0px);
+  --safe-r:env(safe-area-inset-right,0px);
+
+  /* Easing */
+  --ease-out:cubic-bezier(0.25,1,0.5,1);
+  --ease-spring:cubic-bezier(0.25,1,0.5,1);
+}
+
+/* ===== BASE ===== */
+body{
+  font-family:'Noto Sans SC','PingFang SC',system-ui,sans-serif;
+  background:oklch(0.94 0.01 60);
+  color:var(--c-text);
+  font-size:var(--t-sm);
+  line-height:1.6;
+}
+.font-display{font-family:'Playfair Display','Noto Sans SC',serif}
+
+/* ===== APP SHELL ===== */
+#app{
+  max-width:var(--app-max);margin:0 auto;height:100%;position:relative;
+  background:var(--c-surface);overflow:hidden;
+  box-shadow:0 0 60px oklch(0.15 0.02 60 / 0.06);
+}
+
+/* ===== PAGE SYSTEM ===== */
+.page{
+  position:absolute;top:0;left:0;right:0;bottom:var(--tab-h);
+  overflow-y:auto;overflow-x:hidden;
+  -webkit-overflow-scrolling:touch;
+  opacity:0;transform:translateY(12px);
+  pointer-events:none;
+  transition:opacity 280ms var(--ease-out),transform 280ms var(--ease-out);
+  padding-bottom:calc(var(--sp-8) + var(--safe-b));
+}
+.page.active{
+  opacity:1;transform:translateY(0);pointer-events:auto;
+}
+.page::-webkit-scrollbar{display:none}
+
+/* ===== STAGGER ANIMATION ===== */
+.page.active .stagger{animation:staggerIn 500ms var(--ease-out) both}
+.page.active .stagger:nth-child(1){animation-delay:60ms}
+.page.active .stagger:nth-child(2){animation-delay:120ms}
+.page.active .stagger:nth-child(3){animation-delay:180ms}
+.page.active .stagger:nth-child(4){animation-delay:240ms}
+.page.active .stagger:nth-child(5){animation-delay:300ms}
+.page.active .stagger:nth-child(6){animation-delay:360ms}
+.page.active .stagger:nth-child(7){animation-delay:420ms}
+.page.active .stagger:nth-child(8){animation-delay:480ms}
+@keyframes staggerIn{
+  from{opacity:0;transform:translateY(16px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+/* ===== HEADER ===== */
+.header{
+  height:var(--header-h);padding:0 var(--sp-4);
+  display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:10;
+  background:var(--c-surface);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+}
+.header-title{
+  font-size:var(--t-base);font-weight:600;
+  letter-spacing:-0.02em;
+}
+.header-action{
+  width:40px;height:40px;display:flex;align-items:center;justify-content:center;
+  border-radius:50%;cursor:pointer;
+  transition:background 200ms var(--ease-out);
+}
+.header-action:active{background:var(--c-primary-pale)}
+.header-action svg{width:22px;height:22px;color:var(--c-text)}
+
+/* ===== BOTTOM TAB BAR ===== */
+.tab-bar{
+  position:absolute;bottom:0;left:0;right:0;
+  height:calc(var(--tab-h) + var(--safe-b));
+  padding-bottom:var(--safe-b);
+  background:var(--c-surface-raised);
+  display:flex;align-items:stretch;
+  z-index:100;
+}
+.tab-bar::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:var(--c-border);
+}
+.tab-item{
+  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:2px;cursor:pointer;
+  color:var(--c-muted);
+  transition:color 200ms var(--ease-out);
+  position:relative;
+}
+.tab-item.active{color:var(--c-primary)}
+.tab-item svg{width:24px;height:24px;transition:transform 200ms var(--ease-spring)}
+.tab-item.active svg{transform:scale(1.08)}
+.tab-label{font-size:10px;font-weight:500;letter-spacing:0.02em}
+
+/* ===== TOAST ===== */
+.toast-container{
+  position:fixed;top:calc(var(--sp-6) + var(--safe-t));
+  left:50%;transform:translateX(-50%);z-index:9999;
+  display:flex;flex-direction:column;align-items:center;gap:var(--sp-2);
+  pointer-events:none;max-width:var(--app-max);width:100%;
+  padding:0 var(--sp-4);
+}
+.toast{
+  padding:var(--sp-2) var(--sp-4);
+  border-radius:24px;font-size:var(--t-sm);font-weight:500;
+  color:var(--c-white);white-space:nowrap;
+  will-change:transform,opacity;
+  animation:toastIn 350ms var(--ease-spring),toastOut 300ms var(--ease-out) 2200ms forwards;
+  box-shadow:0 4px 20px oklch(0.15 0.02 60 / 0.15);
+}
+.toast--success{background:var(--c-primary)}
+.toast--error{background:var(--c-text)}
+@keyframes toastIn{from{opacity:0;transform:translateY(-16px) scale(0.9)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes toastOut{to{opacity:0;transform:translateY(-8px) scale(0.95)}}
+
+/* ===== SLIDE PANEL ===== */
+.slide-panel{
+  position:absolute;bottom:0;left:0;right:0;
+  background:var(--c-surface);
+  border-radius:20px 20px 0 0;
+  transform:translateY(100%);
+  will-change:transform,opacity;
+  transition:transform 350ms var(--ease-out);
+  z-index:200;
+  max-height:80%;
+  overflow-y:auto;
+  box-shadow:0 -8px 40px oklch(0.15 0.02 60 / 0.1);
+}
+.slide-panel.open{transform:translateY(0)}
+.slide-panel__handle{
+  width:36px;height:4px;border-radius:2px;
+  background:var(--c-border);margin:var(--sp-3) auto 0;
+}
+.slide-panel__header{
+  padding:var(--sp-3) var(--sp-4) var(--sp-4);
+  display:flex;align-items:center;justify-content:space-between;
+  font-size:var(--t-base);font-weight:600;
+}
+.slide-panel__close{
+  width:32px;height:32px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--c-border);cursor:pointer;
+  transition:background 150ms;
+}
+.slide-panel__close:active{background:var(--c-primary-pale)}
+.slide-panel__close svg{width:16px;height:16px;color:var(--c-muted)}
+.slide-panel__body{padding:0 var(--sp-4) var(--sp-8)}
+
+/* ===== OVERLAY ===== */
+.overlay{
+  position:absolute;inset:0;background:var(--c-overlay);
+  z-index:190;opacity:0;pointer-events:none;
+  transition:opacity 300ms var(--ease-out);
+}
+.overlay.open{opacity:1;pointer-events:auto}
+
+/* ===== BUTTONS ===== */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:var(--sp-2);
+  padding:var(--sp-2) var(--sp-4);border-radius:24px;
+  font-size:var(--t-sm);font-weight:500;cursor:pointer;
+  transition:all 200ms var(--ease-out);
+}
+.btn--primary{background:var(--c-primary);color:var(--c-white)}
+.btn--primary:active{transform:scale(0.97);background:var(--c-primary-light)}
+.btn--ghost{
+  border:1px solid var(--c-primary);color:var(--c-primary);
+  background:transparent;
+}
+.btn--ghost:active{background:var(--c-primary-pale)}
+.btn--pill{
+  background:var(--c-primary-pale);color:var(--c-primary);
+  border-radius:20px;padding:var(--sp-1) var(--sp-3);
+  font-size:var(--t-xs);white-space:nowrap;
+}
+.btn--pill:active{background:var(--c-primary-light);color:var(--c-white)}
+
+/* ============================================ */
+/* ===== PAGE: HOME ===== */
+/* ============================================ */
+.home-header{
+  padding:calc(var(--safe-t) + var(--sp-3)) var(--sp-4) var(--sp-2);
+  display:flex;align-items:center;justify-content:space-between;
+  background:var(--c-surface);position:sticky;top:0;z-index:10;
+}
+.home-header__brand{
+  display:flex;align-items:baseline;gap:var(--sp-2);
+}
+.home-header__logo{
+  font-family:'Playfair Display',serif;
+  font-size:var(--t-md);font-weight:700;
+  color:var(--c-primary);letter-spacing:-0.02em;
+}
+.home-header__sub{font-size:var(--t-xs);color:var(--c-muted);font-weight:400}
+.home-header__bell{
+  position:relative;width:40px;height:40px;
+  display:flex;align-items:center;justify-content:center;
+  border-radius:50%;cursor:pointer;
+  transition:background 200ms var(--ease-out);
+}
+.home-header__bell:active{background:var(--c-primary-pale)}
+.home-header__bell svg{width:22px;height:22px;color:var(--c-text)}
+.home-header__dot{
+  position:absolute;top:8px;right:10px;
+  width:7px;height:7px;border-radius:50%;
+  background:var(--c-primary);
+}
+
+/* Search */
+.home-search{
+  margin:0 var(--sp-4) var(--sp-4);
+  position:relative;
+}
+.home-search__input{
+  width:100%;height:44px;
+  padding:0 var(--sp-4) 0 44px;
+  border-radius:22px;
+  background:oklch(0.95 0.01 60);
+  font-size:var(--t-sm);color:var(--c-text);
+  transition:background 200ms var(--ease-out),box-shadow 200ms var(--ease-out);
+}
+.home-search__input::placeholder{color:var(--c-muted)}
+.home-search__input:focus{
+  background:var(--c-surface-raised);
+  box-shadow:0 0 0 2px var(--c-primary-pale);
+}
+.home-search__icon{
+  position:absolute;left:14px;top:50%;transform:translateY(-50%);
+  width:20px;height:20px;color:var(--c-primary);
+}
+
+/* Banner */
+.home-banner{
+  margin:0 var(--sp-4) var(--sp-6);
+  height:160px;border-radius:16px;overflow:hidden;
+  position:relative;cursor:pointer;
+  background:oklch(0.45 0.12 15);
+}
+.home-banner__bg{
+  position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse at 30% 50%,oklch(0.55 0.16 15 / 0.6),transparent 70%),
+    radial-gradient(ellipse at 80% 30%,oklch(0.7 0.12 55 / 0.3),transparent 60%),
+    oklch(0.4 0.1 15);
+}
+.home-banner__content{
+  position:relative;z-index:1;
+  padding:var(--sp-6) var(--sp-6);
+  height:100%;display:flex;flex-direction:column;justify-content:center;
+}
+.home-banner__tag{
+  display:inline-flex;align-items:center;gap:4px;
+  background:oklch(1 0 0 / 0.2);
+  color:var(--c-white);font-size:var(--t-xs);font-weight:500;
+  padding:3px 10px;border-radius:12px;
+  width:fit-content;margin-bottom:var(--sp-2);
+}
+.home-banner__tag svg{width:12px;height:12px}
+.home-banner__title{
+  font-family:'Playfair Display','Noto Sans SC',serif;
+  font-size:var(--t-lg);font-weight:700;
+  color:var(--c-white);line-height:1.2;margin-bottom:var(--sp-1);
+  letter-spacing:-0.01em;
+}
+.home-banner__countdown{
+  display:flex;align-items:center;gap:var(--sp-1);
+  color:oklch(0.9 0.05 55);font-size:var(--t-xs);font-weight:500;
+}
+.countdown__num{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:24px;height:24px;border-radius:6px;
+  background:oklch(1 0 0 / 0.2);
+  font-family:'Playfair Display',serif;
+  font-size:var(--t-xs);font-weight:600;color:var(--c-white);
+}
+
+/* Quick Actions */
+.home-actions{
+  display:flex;justify-content:space-around;
+  padding:0 var(--sp-4);margin-bottom:var(--sp-6);
+}
+.home-action{
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  cursor:pointer;padding:var(--sp-2);
+  transition:transform 200ms var(--ease-spring);
+}
+.home-action:active{transform:scale(0.92)}
+.home-action svg{width:24px;height:24px;color:var(--c-primary)}
+.home-action__label{font-size:var(--t-xs);color:var(--c-text-secondary);font-weight:500}
+
+/* Section */
+.section{margin-bottom:var(--sp-6)}
+.section__header{
+  display:flex;align-items:baseline;justify-content:space-between;
+  padding:0 var(--sp-4);margin-bottom:var(--sp-3);
+}
+.section__title{
+  font-size:var(--t-base);font-weight:600;
+  letter-spacing:-0.01em;
+}
+.section__more{
+  font-size:var(--t-xs);color:var(--c-muted);
+  display:flex;align-items:center;gap:2px;cursor:pointer;
+}
+.section__more svg{width:14px;height:14px}
+
+/* Recommend scroll */
+.recommend-scroll{
+  display:flex;gap:var(--sp-3);overflow-x:auto;
+  padding:0 var(--sp-4);
+  scroll-snap-type:x mandatory;
+  -webkit-overflow-scrolling:touch;
+}
+.recommend-scroll::-webkit-scrollbar{display:none}
+.recommend-item{
+  flex:0 0 140px;scroll-snap-align:start;
+  cursor:pointer;
+  transition:transform 200ms var(--ease-spring);
+}
+.recommend-item:active{transform:scale(0.97)}
+.recommend-item__img{
+  width:140px;height:140px;border-radius:12px;
+  background:oklch(0.95 0.02 60);
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:var(--sp-2);overflow:hidden;
+}
+.recommend-item__img svg{width:36px;height:36px;color:var(--c-primary-light)}
+.recommend-item__name{
+  font-size:var(--t-xs);font-weight:500;
+  line-height:1.4;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;
+  overflow:hidden;margin-bottom:2px;
+}
+.recommend-item__price{
+  font-family:'Playfair Display',serif;
+  font-size:var(--t-sm);font-weight:600;
+  color:var(--c-primary);
+}
+.recommend-item__price::before{content:'¥';font-size:var(--t-xs);margin-right:1px}
+.recommend-item__sold{font-size:10px;color:var(--c-muted)}
+
+/* Recent consult */
+.consult-list{padding:0 var(--sp-4)}
+.consult-item{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:var(--sp-3) 0;
+  border-bottom:1px solid var(--c-border);
+  cursor:pointer;
+  transition:opacity 150ms;
+}
+.consult-item:last-child{border-bottom:none}
+.consult-item:active{opacity:0.6}
+.consult-item__info{flex:1;min-width:0}
+.consult-item__title{
+  font-size:var(--t-sm);font-weight:500;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.consult-item__time{font-size:var(--t-xs);color:var(--c-muted);margin-top:2px}
+.consult-item__arrow{width:16px;height:16px;color:var(--c-muted);flex-shrink:0}
+
+/* ============================================ */
+/* ===== PAGE: CHAT ===== */
+/* ============================================ */
+.chat-header{
+  padding:calc(var(--safe-t) + var(--sp-2)) var(--sp-4) var(--sp-2);
+  display:flex;align-items:center;justify-content:space-between;
+  background:var(--c-surface);position:sticky;top:0;z-index:10;
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+}
+.chat-header__left{
+  display:flex;align-items:center;gap:var(--sp-2);cursor:pointer;
+  padding:var(--sp-1);
+}
+.chat-header__left svg{width:22px;height:22px;color:var(--c-text)}
+.chat-header__title{font-size:var(--t-base);font-weight:600}
+.chat-header__transfer{
+  padding:6px 14px;border-radius:16px;
+  border:1px solid var(--c-primary);
+  color:var(--c-primary);font-size:var(--t-xs);font-weight:500;
+  cursor:pointer;transition:all 200ms var(--ease-out);
+}
+.chat-header__transfer:active{background:var(--c-primary-pale)}
+
+.chat-messages{
+  flex:1;overflow-y:auto;padding:var(--sp-4);
+  display:flex;flex-direction:column;gap:var(--sp-3);
+  -webkit-overflow-scrolling:touch;
+}
+.chat-messages::-webkit-scrollbar{display:none}
+
+.chat-msg{display:flex;flex-direction:column;max-width:82%}
+.chat-msg--ai{align-self:flex-start}
+.chat-msg--user{align-self:flex-end}
+.chat-msg--system{align-self:center;max-width:100%}
+
+.chat-bubble{
+  padding:var(--sp-2) var(--sp-3);border-radius:16px;
+  font-size:var(--t-sm);line-height:1.6;
+  word-break:break-word;
+}
+.chat-msg--ai .chat-bubble{
+  background:var(--c-surface-raised);
+  color:var(--c-text);
+  border-bottom-left-radius:4px;
+}
+.chat-msg--user .chat-bubble{
+  background:var(--c-primary);color:var(--c-white);
+  border-bottom-right-radius:4px;
+}
+.chat-msg--system .chat-bubble{
+  background:none;color:var(--c-muted);
+  font-size:var(--t-xs);padding:var(--sp-1) 0;
+  text-align:center;
+}
+
+/* Chat order card */
+.chat-order-card{
+  background:var(--c-surface-raised);
+  border:1px solid var(--c-border);
+  border-radius:12px;padding:var(--sp-3);
+  margin-top:var(--sp-1);
+}
+.chat-order-card__row{
+  display:flex;align-items:center;gap:var(--sp-2);
+  font-size:var(--t-xs);
+}
+.chat-order-card__row+.chat-order-card__row{margin-top:var(--sp-1)}
+.chat-order-card__label{color:var(--c-muted);flex-shrink:0}
+.chat-order-card__value{color:var(--c-text);font-weight:500}
+.chat-order-card__status{
+  margin-left:auto;padding:2px 8px;border-radius:8px;
+  font-size:10px;font-weight:500;
+}
+.chat-order-card__status--shipping{background:oklch(0.85 0.08 55);color:oklch(0.45 0.12 55)}
+.chat-order-card__status--delivered{background:oklch(0.9 0.06 145);color:oklch(0.4 0.12 145)}
+
+/* Typing indicator */
+.typing-indicator{
+  display:flex;align-items:center;gap:4px;
+  padding:var(--sp-2) var(--sp-3);
+  background:var(--c-surface-raised);
+  border-radius:16px;border-bottom-left-radius:4px;
+  align-self:flex-start;
+}
+.typing-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--c-primary);
+  will-change:transform,opacity;
+  animation:typingBounce 1.4s var(--ease-out) infinite;
+}
+.typing-dot:nth-child(2){animation-delay:0.16s}
+.typing-dot:nth-child(3){animation-delay:0.32s}
+@keyframes typingBounce{
+  0%,60%,100%{transform:translateY(0);opacity:0.4}
+  30%{transform:translateY(-6px);opacity:1}
+}
+
+/* Quick replies */
+.chat-quick{
+  display:flex;gap:var(--sp-2);overflow-x:auto;
+  padding:0 var(--sp-4) var(--sp-2);
+  -webkit-overflow-scrolling:touch;
+}
+.chat-quick::-webkit-scrollbar{display:none}
+
+/* Chat input */
+.chat-input-bar{
+  padding:var(--sp-2) var(--sp-4) var(--sp-2);
+  padding-bottom:calc(var(--sp-2) + var(--safe-b));
+  background:var(--c-surface);
+  display:flex;align-items:center;gap:var(--sp-2);
+  position:sticky;bottom:0;
+}
+.chat-input{
+  flex:1;height:40px;padding:0 var(--sp-4);
+  border-radius:20px;
+  background:oklch(0.95 0.01 60);
+  font-size:var(--t-sm);color:var(--c-text);
+  transition:background 200ms,box-shadow 200ms;
+}
+.chat-input::placeholder{color:var(--c-muted)}
+.chat-input:focus{
+  background:var(--c-surface-raised);
+  box-shadow:0 0 0 2px var(--c-primary-pale);
+}
+.chat-send{
+  width:44px;height:44px;border-radius:50%;
+  background:var(--c-primary);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;flex-shrink:0;
+  transition:transform 200ms var(--ease-spring),background 150ms;
+}
+.chat-send:active{transform:scale(0.9);background:var(--c-primary-light)}
+.chat-send svg{width:18px;height:18px;color:var(--c-white)}
+
+/* ============================================ */
+/* ===== PAGE: ORDERS ===== */
+/* ============================================ */
+.order-tabs{
+  display:flex;gap:0;padding:0 var(--sp-4);
+  border-bottom:1px solid var(--c-border);
+  background:var(--c-surface);position:sticky;top:0;z-index:10;
+}
+.order-tab{
+  flex:1;text-align:center;padding:var(--sp-3) 0;
+  font-size:var(--t-sm);font-weight:500;
+  color:var(--c-muted);cursor:pointer;
+  position:relative;transition:color 200ms var(--ease-out);
+}
+.order-tab.active{color:var(--c-primary);font-weight:600}
+.order-tab.active::after{
+  content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);
+  width:24px;height:2px;border-radius:1px;
+  background:var(--c-primary);
+}
+
+.order-list{padding:var(--sp-4)}
+.order-item{
+  padding:var(--sp-3) 0;
+  border-bottom:1px solid var(--c-border);
+  cursor:pointer;
+  transition:opacity 150ms;
+}
+.order-item:last-child{border-bottom:none}
+.order-item:active{opacity:0.6}
+.order-item__top{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:var(--sp-2);
+}
+.order-item__id{font-size:var(--t-xs);color:var(--c-muted);font-family:'Playfair Display',serif}
+.order-item__status{
+  font-size:var(--t-xs);font-weight:600;
+  padding:2px 8px;border-radius:8px;
+}
+.order-item__status--pending{background:var(--c-accent-light);color:oklch(0.45 0.12 55)}
+.order-item__status--shipped{background:oklch(0.85 0.08 55);color:oklch(0.45 0.12 55)}
+.order-item__status--done{background:oklch(0.9 0.06 145);color:oklch(0.4 0.12 145)}
+.order-item__status--cancelled{background:var(--c-border);color:var(--c-muted)}
+.order-item__body{display:flex;gap:var(--sp-3);align-items:center}
+.order-item__thumb{
+  width:64px;height:64px;border-radius:8px;flex-shrink:0;
+  background:oklch(0.95 0.02 60);
+  display:flex;align-items:center;justify-content:center;
+}
+.order-item__thumb svg{width:24px;height:24px;color:var(--c-primary-light)}
+.order-item__info{flex:1;min-width:0}
+.order-item__name{
+  font-size:var(--t-sm);font-weight:500;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.order-item__spec{font-size:var(--t-xs);color:var(--c-muted);margin-top:2px}
+.order-item__bottom{
+  display:flex;align-items:baseline;justify-content:space-between;
+  margin-top:var(--sp-2);
+}
+.order-item__price{
+  font-family:'Playfair Display',serif;
+  font-size:var(--t-sm);font-weight:600;color:var(--c-text);
+}
+.order-item__price::before{content:'¥';font-size:var(--t-xs)}
+.order-item__qty{font-size:var(--t-xs);color:var(--c-muted)}
+
+/* Order detail panel */
+.order-detail__section{margin-bottom:var(--sp-4)}
+.order-detail__label{
+  font-size:var(--t-xs);color:var(--c-muted);margin-bottom:var(--sp-1);
+  font-weight:500;
+}
+.order-detail__value{font-size:var(--t-sm);font-weight:500}
+.order-detail__logistics{
+  display:flex;align-items:center;gap:var(--sp-3);
+  padding:var(--sp-3);background:var(--c-primary-pale);
+  border-radius:12px;
+}
+.order-detail__logistics-icon{
+  width:36px;height:36px;border-radius:50%;
+  background:var(--c-primary);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.order-detail__logistics-icon svg{width:18px;height:18px;color:var(--c-white)}
+.order-detail__logistics-text{font-size:var(--t-xs);line-height:1.5}
+.order-detail__logistics-text strong{color:var(--c-primary)}
+
+/* ============================================ */
+/* ===== PAGE: AFTERSALE ===== */
+/* ============================================ */
+.aftersale-form{padding:var(--sp-4)}
+.form-group{margin-bottom:var(--sp-6)}
+.form-label{
+  font-size:var(--t-sm);font-weight:600;
+  margin-bottom:var(--sp-2);display:block;
+}
+.form-select-trigger{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:var(--sp-3) var(--sp-4);
+  border:1px solid var(--c-border);
+  border-radius:12px;font-size:var(--t-sm);
+  color:var(--c-text);cursor:pointer;
+  transition:border-color 200ms,box-shadow 200ms;
+}
+.form-select-trigger:active,.form-select-trigger:focus-within{
+  border-color:var(--c-primary);
+  box-shadow:0 0 0 2px var(--c-primary-pale);
+}
+.form-select-trigger svg{width:16px;height:16px;color:var(--c-muted);transition:transform 200ms var(--ease-out)}
+.form-select-trigger.open svg{transform:rotate(180deg)}
+.form-select-trigger.placeholder{color:var(--c-muted)}
+
+.form-select-options{
+  max-height:0;overflow:hidden;
+  transition:max-height 300ms var(--ease-out);
+  border:1px solid transparent;border-radius:12px;
+}
+.form-select-options.open{
+  max-height:300px;
+  border-color:var(--c-border);
+  margin-top:var(--sp-1);
+}
+.form-select-option{
+  padding:var(--sp-3) var(--sp-4);font-size:var(--t-sm);
+  cursor:pointer;transition:background 150ms;
+}
+.form-select-option:first-child{border-radius:12px 12px 0 0}
+.form-select-option:last-child{border-radius:0 0 12px 12px}
+.form-select-option:active{background:var(--c-primary-pale)}
+.form-select-option.selected{color:var(--c-primary);font-weight:600}
+
+.form-textarea{
+  width:100%;min-height:120px;padding:var(--sp-3) var(--sp-4);
+  border:1px solid var(--c-border);border-radius:12px;
+  font-size:var(--t-sm);color:var(--c-text);resize:none;
+  line-height:1.6;transition:border-color 200ms,box-shadow 200ms;
+}
+.form-textarea::placeholder{color:var(--c-muted)}
+.form-textarea:focus{
+  border-color:var(--c-primary);
+  box-shadow:0 0 0 2px var(--c-primary-pale);
+}
+
+.form-upload{
+  border:1.5px dashed var(--c-border);
+  border-radius:12px;padding:var(--sp-6) var(--sp-4);
+  display:flex;flex-direction:column;align-items:center;gap:var(--sp-2);
+  cursor:pointer;transition:border-color 200ms,background 200ms;
+}
+.form-upload:active{border-color:var(--c-primary);background:var(--c-primary-pale)}
+.form-upload svg{width:32px;height:32px;color:var(--c-muted)}
+.form-upload__text{font-size:var(--t-xs);color:var(--c-muted)}
+
+.form-upload__preview{
+  display:flex;gap:var(--sp-2);margin-top:var(--sp-2);flex-wrap:wrap;
+}
+.form-upload__thumb{
+  width:72px;height:72px;border-radius:8px;
+  background:var(--c-primary-pale);
+  display:flex;align-items:center;justify-content:center;
+  position:relative;
+}
+.form-upload__thumb svg{width:20px;height:20px;color:var(--c-primary)}
+.form-upload__remove{
+  position:absolute;top:-4px;right:-4px;
+  width:18px;height:18px;border-radius:50%;
+  background:var(--c-text);color:var(--c-white);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:10px;
+}
+
+.form-submit{
+  width:100%;height:48px;border-radius:24px;
+  background:var(--c-primary);color:var(--c-white);
+  font-size:var(--t-base);font-weight:600;
+  cursor:pointer;
+  transition:transform 200ms var(--ease-spring),background 150ms;
+}
+.form-submit:active{transform:scale(0.97);background:var(--c-primary-light)}
+
+.aftersale-success{
+  display:none;flex-direction:column;align-items:center;
+  padding:var(--sp-12) var(--sp-4);text-align:center;
+}
+.aftersale-success.show{display:flex}
+.aftersale-success__icon{
+  width:56px;height:56px;border-radius:50%;
+  background:oklch(0.92 0.06 145);
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:var(--sp-4);
+}
+.aftersale-success__icon svg{width:28px;height:28px;color:oklch(0.4 0.12 145)}
+.aftersale-success__title{
+  font-size:var(--t-base);font-weight:600;margin-bottom:var(--sp-1);
+}
+.aftersale-success__desc{font-size:var(--t-sm);color:var(--c-muted)}
+
+/* ============================================ */
+/* ===== PAGE: LIVE ===== */
+/* ============================================ */
+.live-player{
+  width:100%;aspect-ratio:16/9;
+  background:oklch(0.18 0.02 60);
+  position:relative;overflow:hidden;
+  display:flex;align-items:center;justify-content:center;
+}
+.live-player__bg{
+  position:absolute;inset:0;
+  background:radial-gradient(ellipse at center,oklch(0.22 0.03 60),oklch(0.15 0.02 60));
+}
+.live-player__play{
+  position:relative;z-index:1;
+  width:56px;height:56px;border-radius:50%;
+  background:oklch(1 0 0 / 0.15);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:transform 200ms var(--ease-spring);
+}
+.live-player__play:active{transform:scale(0.9)}
+.live-player__play svg{width:28px;height:28px;color:var(--c-white)}
+.live-player__badge{
+  position:absolute;top:var(--sp-3);left:var(--sp-3);z-index:2;
+  display:flex;align-items:center;gap:4px;
+  padding:4px 10px;border-radius:8px;
+  background:oklch(0.55 0.2 25);
+  font-size:var(--t-xs);font-weight:600;color:var(--c-white);
+}
+.live-player__badge::before{
+  content:'';width:6px;height:6px;border-radius:50%;
+  background:#fff;animation:livePulse 1.5s ease infinite;
+}
+@keyframes livePulse{0%,100%{opacity:1}50%{opacity:0.3}}
+.live-player__viewers{
+  position:absolute;top:var(--sp-3);right:var(--sp-3);z-index:2;
+  display:flex;align-items:center;gap:4px;
+  padding:4px 10px;border-radius:8px;
+  background:oklch(0 0 0 / 0.4);
+  font-size:var(--t-xs);color:var(--c-white);
+}
+.live-player__viewers svg{width:14px;height:14px}
+
+/* Danmaku area */
+.live-danmaku{
+  position:absolute;bottom:var(--sp-3);left:0;right:0;
+  z-index:2;height:80px;overflow:hidden;
+  pointer-events:none;
+}
+.danmaku-item{
+  position:absolute;white-space:nowrap;
+  font-size:var(--t-xs);color:var(--c-white);
+  text-shadow:0 1px 3px oklch(0 0 0 / 0.5);
+  will-change:transform,opacity;
+  animation:danmakuScroll 8s linear forwards;
+}
+@keyframes danmakuScroll{
+  from{transform:translateX(100%)}
+  to{transform:translateX(-200%)}
+}
+
+/* Live info */
+.live-info{padding:var(--sp-4)}
+.live-info__title{
+  font-size:var(--t-base);font-weight:600;
+  margin-bottom:var(--sp-1);
+}
+.live-info__host{
+  display:flex;align-items:center;gap:var(--sp-2);
+  font-size:var(--t-xs);color:var(--c-muted);margin-bottom:var(--sp-4);
+}
+.live-info__avatar{
+  width:28px;height:28px;border-radius:50%;
+  background:var(--c-primary-pale);
+  display:flex;align-items:center;justify-content:center;
+}
+.live-info__avatar svg{width:16px;height:16px;color:var(--c-primary)}
+
+/* Live chat */
+.live-chat{
+  padding:0 var(--sp-4) var(--sp-2);
+  max-height:180px;overflow-y:auto;
+}
+.live-chat::-webkit-scrollbar{display:none}
+.live-chat-msg{
+  font-size:var(--t-xs);margin-bottom:var(--sp-1);line-height:1.5;
+}
+.live-chat-msg__name{color:var(--c-primary);font-weight:600}
+.live-chat-msg__text{color:var(--c-text-secondary)}
+
+/* Live products */
+.live-products{padding:var(--sp-2) var(--sp-4)}
+.live-product{
+  display:flex;gap:var(--sp-3);align-items:center;
+  padding:var(--sp-3) 0;
+  border-bottom:1px solid var(--c-border);
+  cursor:pointer;transition:opacity 150ms;
+}
+.live-product:last-child{border-bottom:none}
+.live-product:active{opacity:0.6}
+.live-product__img{
+  width:56px;height:56px;border-radius:8px;flex-shrink:0;
+  background:oklch(0.95 0.02 60);
+  display:flex;align-items:center;justify-content:center;
+}
+.live-product__img svg{width:22px;height:22px;color:var(--c-primary-light)}
+.live-product__info{flex:1;min-width:0}
+.live-product__name{
+  font-size:var(--t-sm);font-weight:500;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.live-product__price{
+  font-family:'Playfair Display',serif;
+  font-size:var(--t-sm);font-weight:600;color:var(--c-primary);margin-top:2px;
+}
+.live-product__price::before{content:'¥';font-size:var(--t-xs)}
+.live-product__btn{
+  padding:6px 14px;border-radius:16px;
+  background:var(--c-primary);color:var(--c-white);
+  font-size:var(--t-xs);font-weight:500;
+  cursor:pointer;flex-shrink:0;
+  transition:transform 200ms var(--ease-spring);
+}
+.live-product__btn:active{transform:scale(0.92)}
+
+/* ============================================ */
+/* ===== PAGE: PROFILE ===== */
+/* ============================================ */
+.profile-header{
+  padding:calc(var(--safe-t) + var(--sp-6)) var(--sp-4) var(--sp-6);
+  background:var(--c-primary);
+  position:relative;overflow:hidden;
+}
+.profile-header::after{
+  content:'';position:absolute;bottom:-20px;left:-10%;right:-10%;height:40px;
+  background:var(--c-surface);border-radius:50% 50% 0 0;
+}
+.profile-header__content{
+  display:flex;align-items:center;gap:var(--sp-4);
+  position:relative;z-index:1;
+}
+.profile-avatar{
+  width:64px;height:64px;border-radius:50%;
+  background:oklch(1 0 0 / 0.25);
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+}
+.profile-avatar svg{width:32px;height:32px;color:var(--c-white)}
+.profile-info{flex:1}
+.profile-name{
+  font-size:var(--t-base);font-weight:600;color:var(--c-white);
+  margin-bottom:2px;
+}
+.profile-membership{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:2px 10px;border-radius:10px;
+  background:oklch(1 0 0 / 0.2);
+  font-size:10px;font-weight:500;color:var(--c-white);
+}
+.profile-membership svg{width:12px;height:12px;color:var(--c-accent)}
+
+.profile-stats{
+  display:flex;justify-content:space-around;
+  padding:var(--sp-4);margin:0 var(--sp-4);
+  margin-top:calc(var(--sp-3) * -1);
+  position:relative;z-index:2;
+  background:var(--c-surface-raised);
+  border-radius:16px;
+  box-shadow:0 2px 12px oklch(0.15 0.02 60 / 0.06);
+}
+.profile-stat{
+  text-align:center;cursor:pointer;
+}
+.profile-stat__num{
+  font-family:'Playfair Display',serif;
+  font-size:var(--t-md);font-weight:700;
+  color:var(--c-text);line-height:1.2;
+}
+.profile-stat__label{font-size:var(--t-xs);color:var(--c-muted);margin-top:2px}
+
+.profile-menu{padding:var(--sp-4) 0}
+.profile-menu__item{
+  display:flex;align-items:center;gap:var(--sp-3);
+  padding:var(--sp-3) var(--sp-4);
+  cursor:pointer;transition:background 150ms;
+}
+.profile-menu__item:active{background:var(--c-primary-pale)}
+.profile-menu__icon{
+  width:36px;height:36px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+}
+.profile-menu__icon--coral{background:var(--c-primary-pale)}
+.profile-menu__icon--coral svg{color:var(--c-primary)}
+.profile-menu__icon--gold{background:var(--c-accent-light)}
+.profile-menu__icon--gold svg{color:oklch(0.45 0.12 55)}
+.profile-menu__icon--gray{background:oklch(0.95 0.01 60)}
+.profile-menu__icon--gray svg{color:var(--c-muted)}
+.profile-menu__text{flex:1;font-size:var(--t-sm);font-weight:500}
+.profile-menu__arrow{width:16px;height:16px;color:var(--c-muted)}
+
+/* Star rating */
+.star-rating{display:flex;gap:4px;padding:var(--sp-3) var(--sp-4)}
+.star-rating__star{
+  width:28px;height:28px;cursor:pointer;
+  transition:transform 200ms var(--ease-spring);
+}
+.star-rating__star:active{transform:scale(0.85)}
+.star-rating__star svg{width:100%;height:100%}
+.star-rating__star--filled svg{color:var(--c-accent)}
+.star-rating__star--empty svg{color:var(--c-border)}
+.star-rating__label{
+  font-size:var(--t-xs);color:var(--c-muted);
+  margin-left:var(--sp-2);display:flex;align-items:center;
+}
+
+/* ===== UTILITY ===== */
+.hidden{display:none!important}
+
+/* ===== TOGGLE SWITCH ===== */
+.toggle-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:var(--sp-3) 0;
+  border-bottom:1px solid var(--c-border);
+}
+.toggle-row:last-child{border-bottom:none}
+.toggle-row__label{font-size:var(--t-sm);font-weight:500}
+.toggle-row__desc{font-size:var(--t-xs);color:var(--c-muted);margin-top:2px}
+.toggle-switch{
+  width:44px;height:24px;border-radius:12px;
+  background:var(--c-border);cursor:pointer;
+  position:relative;transition:background 200ms var(--ease-out);
+  flex-shrink:0;
+}
+.toggle-switch.on{background:var(--c-primary)}
+.toggle-switch__knob{
+  position:absolute;top:2px;left:2px;
+  width:20px;height:20px;border-radius:50%;
+  background:#fff;
+  box-shadow:0 1px 4px oklch(0.15 0.02 60 / 0.2);
+  transition:transform 200ms var(--ease-spring);
+}
+.toggle-switch.on .toggle-switch__knob{transform:translateX(20px)}
+
+/* ===== CONTEXT INDICATOR ===== */
+.chat-context{
+  display:flex;align-items:center;gap:6px;
+  padding:6px var(--sp-4);
+  background:var(--c-primary-pale);
+  font-size:var(--t-xs);color:var(--c-primary);
+  font-weight:500;
+}
+.chat-context svg{width:14px;height:14px;flex-shrink:0}
+.chat-context-note{
+  display:flex;align-items:center;gap:4px;
+  padding:4px 10px;border-radius:8px;
+  background:oklch(0.92 0.04 55);
+  font-size:var(--t-xs);color:oklch(0.45 0.12 55);
+  font-weight:500;margin-bottom:4px;
+  align-self:flex-start;
+}
+
+/* ===== VOICE BUTTON ===== */
+.chat-voice{
+  width:40px;height:40px;border-radius:50%;
+  background:var(--c-surface-raised);
+  border:1px solid var(--c-border);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;flex-shrink:0;
+  transition:all 200ms var(--ease-out);
+}
+.chat-voice:active{background:var(--c-primary-pale);border-color:var(--c-primary)}
+.chat-voice svg{width:18px;height:18px;color:var(--c-text)}
+.chat-voice.listening{
+  background:var(--c-error);
+  border-color:var(--c-error);
+  animation:voicePulse 1.2s ease infinite;
+}
+.chat-voice.listening svg{color:var(--c-white)}
+@keyframes voicePulse{
+  0%,100%{box-shadow:0 0 0 0 oklch(0.55 0.2 25 / 0.3)}
+  50%{box-shadow:0 0 0 10px oklch(0.55 0.2 25 / 0)}
+}
+.voice-status{
+  position:absolute;bottom:100%;left:50%;transform:translateX(-50%);
+  padding:4px 10px;border-radius:8px;
+  background:var(--c-text);color:var(--c-white);
+  font-size:var(--t-xs);white-space:nowrap;
+  margin-bottom:6px;
+  display:none;
+}
+.voice-status.show{display:flex;align-items:center;gap:4px}
+.voice-status__dot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--c-error);
+  animation:voicePulse 1s ease infinite;
+}
+
+/* ===== SPEAKER ICON ===== */
+.chat-speaker{
+  display:inline-flex;align-items:center;gap:2px;
+  margin-top:4px;
+  padding:2px 6px;border-radius:6px;
+  background:var(--c-primary-pale);
+  cursor:pointer;
+  transition:background 150ms;
+}
+.chat-speaker:active{background:var(--c-primary-light)}
+.chat-speaker svg{width:12px;height:12px;color:var(--c-primary)}
+.chat-speaker span{font-size:10px;color:var(--c-primary);font-weight:500}
+
+/* ===== READ RECEIPT ===== */
+.chat-receipt{
+  font-size:10px;color:var(--c-muted);
+  margin-top:2px;padding:0 4px;
+}
+.chat-msg--ai .chat-receipt{text-align:left}
+.chat-msg--user .chat-receipt{text-align:right}
+
+/* ===== SMART RECOMMENDATIONS ===== */
+.chat-smart-rec{
+  padding:var(--sp-2) var(--sp-4);
+}
+.chat-smart-rec__header{
+  display:flex;align-items:center;gap:4px;
+  font-size:var(--t-xs);color:var(--c-muted);
+  margin-bottom:var(--sp-1);font-weight:500;
+}
+.chat-smart-rec__header svg{width:12px;height:12px;color:var(--c-accent)}
+
+/* ===== DANMAKU AGGREGATION ===== */
+.live-danmaku-agg{
+  margin:var(--sp-3) var(--sp-4);
+  padding:var(--sp-3);
+  background:var(--c-surface-raised);
+  border:1px solid var(--c-border);
+  border-radius:12px;
+}
+.live-danmaku-agg__header{
+  display:flex;align-items:center;gap:var(--sp-2);
+  font-size:var(--t-sm);font-weight:600;
+  margin-bottom:var(--sp-2);
+}
+.live-danmaku-agg__badge{
+  display:inline-flex;align-items:center;justify-content:center;
+  min-width:20px;height:20px;padding:0 6px;
+  border-radius:10px;
+  background:var(--c-primary);color:var(--c-white);
+  font-size:10px;font-weight:600;
+}
+.live-danmaku-agg__item{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:var(--sp-2) 0;
+  border-bottom:1px solid var(--c-border);
+  font-size:var(--t-xs);
+}
+.live-danmaku-agg__item:last-child{border-bottom:none}
+.live-danmaku-agg__count{
+  color:var(--c-muted);font-weight:500;
+  font-size:var(--t-xs);
+}
+
+/* ===== PREFERENCE TAGS ===== */
+.home-prefs{
+  padding:0 var(--sp-4);margin-bottom:var(--sp-4);
+}
+.home-prefs__subtitle{
+  font-size:var(--t-xs);color:var(--c-muted);
+  margin-bottom:var(--sp-2);
+}
+.home-prefs__tags{
+  display:flex;gap:var(--sp-2);flex-wrap:wrap;
+}
+.home-prefs__tag{
+  padding:4px 12px;border-radius:16px;
+  background:var(--c-primary-pale);
+  color:var(--c-primary);
+  font-size:var(--t-xs);font-weight:500;
+}
+
+/* ===== AI RECOGNITION ===== */
+.ai-recognition{
+  margin-top:var(--sp-3);padding:var(--sp-3);
+  background:oklch(0.92 0.04 55);
+  border:1px solid oklch(0.85 0.06 55);
+  border-radius:12px;
+}
+.ai-recognition__title{
+  font-size:var(--t-sm);font-weight:600;
+  color:oklch(0.45 0.12 55);
+  margin-bottom:var(--sp-2);
+  display:flex;align-items:center;gap:4px;
+}
+.ai-recognition__title svg{width:16px;height:16px}
+.ai-recognition__row{
+  display:flex;align-items:center;gap:var(--sp-2);
+  font-size:var(--t-xs);margin-bottom:var(--sp-1);
+}
+.ai-recognition__label{color:var(--c-muted);flex-shrink:0}
+.ai-recognition__value{color:var(--c-text);font-weight:500}
+.ai-recognition__confidence{
+  font-size:var(--t-xs);color:var(--c-muted);
+  margin-top:var(--sp-1);
+}
+
+/* ===== FEEDBACK TAGS ===== */
+.feedback-tags{
+  display:flex;gap:var(--sp-2);flex-wrap:wrap;
+  padding:0 var(--sp-4);margin-bottom:var(--sp-3);
+}
+.feedback-tag{
+  padding:6px 14px;border-radius:16px;
+  border:1px solid var(--c-border);
+  font-size:var(--t-xs);font-weight:500;
+  color:var(--c-text-secondary);
+  cursor:pointer;
+  transition:all 200ms var(--ease-out);
+}
+.feedback-tag.selected{
+  background:var(--c-primary);color:var(--c-white);
+  border-color:var(--c-primary);
+}
+.feedback-textarea{
+  width:100%;min-height:80px;padding:var(--sp-3) var(--sp-4);
+  border:1px solid var(--c-border);border-radius:12px;
+  font-size:var(--t-sm);color:var(--c-text);resize:none;
+  line-height:1.6;margin:0 var(--sp-4) var(--sp-3);
+  transition:border-color 200ms,box-shadow 200ms;
+}
+.feedback-textarea::placeholder{color:var(--c-muted)}
+.feedback-textarea:focus{
+  border-color:var(--c-primary);
+  box-shadow:0 0 0 2px var(--c-primary-pale);
+}
+.feedback-submit{
+  width:calc(100% - var(--sp-8));
+  margin:0 var(--sp-4) var(--sp-4);
+  height:40px;border-radius:20px;
+  background:var(--c-primary);color:var(--c-white);
+  font-size:var(--t-sm);font-weight:500;
+  cursor:pointer;
+  transition:transform 200ms var(--ease-spring),background 150ms;
+}
+.feedback-submit:active{transform:scale(0.97);background:var(--c-primary-light)}
+
+/* ===== ENHANCED PRODUCT CARD ===== */
+.product-rec-card{
+  padding:var(--sp-3);background:var(--c-surface-raised);
+  border:1px solid var(--c-border);border-radius:12px;
+  margin-top:var(--sp-2);cursor:pointer;
+  transition:transform 200ms var(--ease-spring);
+}
+.product-rec-card:active{transform:scale(0.98)}
+.product-rec-card__top{
+  display:flex;gap:var(--sp-3);align-items:center;
+}
+.product-rec-card__img{
+  width:56px;height:56px;border-radius:8px;flex-shrink:0;
+  background:oklch(0.95 0.02 60);
+  display:flex;align-items:center;justify-content:center;
+}
+.product-rec-card__img svg{width:22px;height:22px;color:var(--c-primary-light)}
+.product-rec-card__info{flex:1;min-width:0}
+.product-rec-card__name{
+  font-size:var(--t-sm);font-weight:500;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.product-rec-card__price{
+  font-family:'Playfair Display',serif;
+  font-size:var(--t-sm);font-weight:600;color:var(--c-primary);margin-top:2px;
+}
+.product-rec-card__price::before{content:'¥';font-size:var(--t-xs)}
+.product-rec-card__selling{
+  font-size:var(--t-xs);color:var(--c-accent);margin-top:2px;
+}
+.product-rec-card__coupon{
+  display:inline-block;
+  margin-top:var(--sp-2);
+  padding:3px 10px;border-radius:6px;
+  border:1px dashed var(--c-primary);
+  color:var(--c-primary);
+  font-size:var(--t-xs);font-weight:500;
+}
+.product-rec-card__why{
+  margin-top:var(--sp-2);
+  padding-top:var(--sp-2);
+  border-top:1px solid var(--c-border);
+  font-size:var(--t-xs);color:var(--c-muted);
+  cursor:pointer;
+  display:flex;align-items:center;gap:4px;
+}
+.product-rec-card__why svg{width:12px;height:12px;transition:transform 200ms}
+.product-rec-card__why.open svg{transform:rotate(90deg)}
+.product-rec-card__why-detail{
+  display:none;
+  margin-top:var(--sp-1);
+  padding:var(--sp-2);
+  background:var(--c-primary-pale);
+  border-radius:8px;
+  font-size:var(--t-xs);color:var(--c-text-secondary);
+  line-height:1.5;
+}
+.product-rec-card__why.open+.product-rec-card__why-detail{display:block}
+
+/* ===== SELF-SERVICE BUTTONS ===== */
+.self-service{
+  display:flex;flex-wrap:wrap;gap:var(--sp-2);
+  margin-top:var(--sp-4);
+}
+.self-service__btn{
+  flex:1;min-width:calc(50% - var(--sp-2));
+  padding:var(--sp-2) var(--sp-3);
+  border-radius:10px;
+  border:1px solid var(--c-border);
+  background:var(--c-surface-raised);
+  font-size:var(--t-xs);font-weight:500;
+  color:var(--c-text);
+  cursor:pointer;
+  text-align:center;
+  transition:all 200ms var(--ease-out);
+}
+.self-service__btn:active{background:var(--c-primary-pale);border-color:var(--c-primary);color:var(--c-primary)}
+.self-service__btn--primary{
+  background:var(--c-primary);color:var(--c-white);border-color:var(--c-primary);
+}
+.self-service__btn--primary:active{background:var(--c-primary-light)}
+.self-service__btn--danger{
+  color:var(--c-error);border-color:oklch(0.92 0.06 25);
+}
+.self-service__btn--danger:active{background:oklch(0.95 0.04 25)}
+
+/* ===== ADDRESS FORM ===== */
+.address-form{
+  margin-top:var(--sp-3);padding:var(--sp-3);
+  background:var(--c-surface-raised);
+  border:1px solid var(--c-border);
+  border-radius:12px;
+}
+.address-form__field{
+  margin-bottom:var(--sp-2);
+}
+.address-form__field:last-child{margin-bottom:0}
+.address-form__input{
+  width:100%;height:36px;padding:0 var(--sp-3);
+  border:1px solid var(--c-border);border-radius:8px;
+  font-size:var(--t-xs);color:var(--c-text);
+  transition:border-color 200ms;
+}
+.address-form__input:focus{border-color:var(--c-primary);box-shadow:0 0 0 2px var(--c-primary-pale)}
+.address-form__input::placeholder{color:var(--c-muted)}
+.address-form__actions{
+  display:flex;gap:var(--sp-2);margin-top:var(--sp-3);
+}
+
+/* ===== CONFIRM DIALOG ===== */
+.confirm-dialog{
+  position:absolute;inset:0;
+  background:var(--c-overlay);
+  z-index:300;
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;
+  transition:opacity 200ms var(--ease-out);
+}
+.confirm-dialog.open{opacity:1;pointer-events:auto}
+.confirm-dialog__box{
+  width:280px;background:var(--c-surface);
+  border-radius:16px;padding:var(--sp-6) var(--sp-4) var(--sp-4);
+  text-align:center;
+  transform:scale(0.9);
+  transition:transform 200ms var(--ease-spring);
+}
+.confirm-dialog.open .confirm-dialog__box{transform:scale(1)}
+.confirm-dialog__title{
+  font-size:var(--t-base);font-weight:600;margin-bottom:var(--sp-2);
+}
+.confirm-dialog__desc{
+  font-size:var(--t-sm);color:var(--c-muted);margin-bottom:var(--sp-4);
+}
+.confirm-dialog__actions{
+  display:flex;gap:var(--sp-2);
+}
+.confirm-dialog__actions .btn{flex:1;justify-content:center}
+
+/* ===== CHANNEL SYNC ===== */
+.channel-item{
+  display:flex;align-items:center;gap:var(--sp-3);
+  padding:var(--sp-3) 0;
+  border-bottom:1px solid var(--c-border);
+}
+.channel-item:last-child{border-bottom:none}
+.channel-item__dot{
+  width:8px;height:8px;border-radius:50%;flex-shrink:0;
+}
+.channel-item__dot--on{background:var(--c-success)}
+.channel-item__dot--off{background:var(--c-muted)}
+.channel-item__name{flex:1;font-size:var(--t-sm);font-weight:500}
+.channel-item__status{font-size:var(--t-xs);color:var(--c-muted);margin-right:var(--sp-2)}
+
+/* ===== AFTERSALE AI ===== */
+.aftersale-ai{
+  margin-bottom:var(--sp-4);padding:var(--sp-3);
+  background:oklch(0.92 0.04 55);
+  border:1px solid oklch(0.85 0.06 55);
+  border-radius:12px;
+}
+.aftersale-ai__title{
+  font-size:var(--t-sm);font-weight:600;
+  color:oklch(0.45 0.12 55);
+  margin-bottom:var(--sp-1);
+  display:flex;align-items:center;gap:4px;
+}
+.aftersale-ai__title svg{width:16px;height:16px}
+.aftersale-ai__confidence{
+  font-size:var(--t-xs);color:var(--c-muted);
+  margin-bottom:var(--sp-2);
+}
+.aftersale-ai__banner{
+  padding:var(--sp-2) var(--sp-3);
+  background:oklch(0.9 0.06 145);
+  border-radius:8px;
+  font-size:var(--t-xs);color:oklch(0.4 0.12 145);
+  font-weight:500;
+  margin-bottom:var(--sp-2);
+  display:flex;align-items:center;gap:4px;
+}
+.aftersale-ai__banner svg{width:14px;height:14px;flex-shrink:0}
+.aftersale-ai__time{
+  font-size:var(--t-xs);color:var(--c-muted);
+  margin-bottom:var(--sp-2);
+}
+.aftersale-progress{
+  display:flex;align-items:center;gap:var(--sp-1);
+  font-size:var(--t-xs);color:var(--c-muted);
+  flex-wrap:wrap;
+}
+.aftersale-progress__step{
+  display:flex;align-items:center;gap:2px;
+}
+.aftersale-progress__step--active{color:var(--c-primary);font-weight:600}
+.aftersale-progress__step--done{color:var(--c-success)}
+.aftersale-progress__arrow{margin:0 2px;color:var(--c-border)}
+
+/* ===== PRIVACY LINK ===== */
+.privacy-link{
+  display:block;
+  padding:var(--sp-3) 0;
+  font-size:var(--t-sm);color:var(--c-primary);
+  font-weight:500;cursor:pointer;
+  text-align:center;
+  border-top:1px solid var(--c-border);
+  margin-top:var(--sp-2);
+}
+
+/* ===== MARK ALL READ ===== */
+.mark-all-read{
+  padding:4px 10px;border-radius:8px;
+  background:var(--c-primary);color:var(--c-white);
+  font-size:10px;font-weight:500;
+  cursor:pointer;
+  transition:transform 200ms var(--ease-spring);
+}
+.mark-all-read:active{transform:scale(0.92)}
+
+/* ===== PREF NOTE ===== */
+.pref-note{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:2px 8px;border-radius:6px;
+  background:var(--c-accent-light);
+  font-size:10px;color:oklch(0.45 0.12 55);
+  font-weight:500;margin-top:4px;
+}
+.pref-note svg{width:10px;height:10px}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- ===== CONFIRM DIALOG ===== -->
+  <div class="confirm-dialog" id="confirmDialog">
+    <div class="confirm-dialog__box">
+      <div class="confirm-dialog__title" id="confirmTitle">确定操作</div>
+      <div class="confirm-dialog__desc" id="confirmDesc">确定要执行此操作吗？</div>
+      <div class="confirm-dialog__actions">
+        <button class="btn btn--ghost" onclick="closeConfirm()">取消</button>
+        <button class="btn btn--primary" id="confirmOk" onclick="closeConfirm()">确定</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TOAST CONTAINER ===== -->
+  <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+  <!-- ===== OVERLAY ===== -->
+  <div class="overlay" id="overlay" onclick="closeAllPanels()"></div>
+
+  <!-- ===== SLIDE PANEL ===== -->
+  <div class="slide-panel" id="slidePanel" aria-expanded="false">
+    <div class="slide-panel__handle"></div>
+    <div class="slide-panel__header">
+      <span id="panelTitle">详情</span>
+      <div class="slide-panel__close" role="button" tabindex="0" aria-label="关闭" onclick="closeAllPanels()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </div>
+    </div>
+    <div class="slide-panel__body" id="panelBody"></div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- ===== PAGE: HOME ===== -->
+  <!-- ============================================ -->
+  <div class="page active" id="page-home">
+    <!-- Header -->
+    <div class="home-header stagger">
+      <div class="home-header__brand">
+        <span class="home-header__logo font-display">AI</span>
+        <span class="home-header__sub">智能客服</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:var(--sp-2)">
+        <span class="mark-all-read" onclick="markAllRead()">全部已读</span>
+        <div class="home-header__bell" role="button" tabindex="0" aria-label="通知" onclick="showToast('暂无新消息','success')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <span class="home-header__dot" id="bellDot"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Search -->
+    <div class="home-search stagger">
+      <svg class="home-search__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input class="home-search__input" type="text" placeholder="搜索商品、订单或问题..." id="homeSearch" onkeydown="if(event.key==='Enter')handleHomeSearch()">
+    </div>
+
+    <!-- Banner -->
+    <div class="home-banner stagger" onclick="navigateTo('live')">
+      <div class="home-banner__bg"></div>
+      <div class="home-banner__content">
+        <div class="home-banner__tag">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+          直播专属
+        </div>
+        <div class="home-banner__title">直播专属优惠</div>
+        <div class="home-banner__countdown">
+          <span>距结束</span>
+          <span class="countdown__num" id="cdH">02</span>
+          <span>:</span>
+          <span class="countdown__num" id="cdM">34</span>
+          <span>:</span>
+          <span class="countdown__num" id="cdS">56</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="home-actions stagger">
+      <div class="home-action" role="button" tabindex="0" onclick="navigateTo('chat')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        <span class="home-action__label">AI客服</span>
+      </div>
+      <div class="home-action" role="button" tabindex="0" onclick="navigateTo('orders')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        <span class="home-action__label">我的订单</span>
+      </div>
+      <div class="home-action" role="button" tabindex="0" onclick="navigateTo('live')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+        <span class="home-action__label">直播间</span>
+      </div>
+      <div class="home-action" role="button" tabindex="0" onclick="navigateTo('aftersale')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <span class="home-action__label">售后服务</span>
+      </div>
+    </div>
+
+    <!-- My Preferences -->
+    <div class="home-prefs stagger">
+      <div class="home-prefs__subtitle">基于您的浏览偏好推荐</div>
+      <div class="home-prefs__tags">
+        <span class="home-prefs__tag">护肤</span>
+        <span class="home-prefs__tag">美妆</span>
+        <span class="home-prefs__tag">数码</span>
+        <span class="home-prefs__tag">健康</span>
+      </div>
+    </div>
+
+    <!-- Recommend -->
+    <div class="section stagger">
+      <div class="section__header">
+        <span class="section__title">为你推荐</span>
+        <span class="section__more" onclick="showToast('查看更多推荐','success')">
+          更多
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </span>
+      </div>
+      <div class="recommend-scroll" id="recommendScroll"></div>
+    </div>
+
+    <!-- Recent Consult -->
+    <div class="section stagger">
+      <div class="section__header">
+        <span class="section__title">最近咨询</span>
+      </div>
+      <div class="consult-list" id="consultList"></div>
+    </div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- ===== PAGE: CHAT ===== -->
+  <!-- ============================================ -->
+  <div class="page" id="page-chat" style="display:flex;flex-direction:column">
+    <div class="chat-header">
+      <div class="chat-header__left" role="button" tabindex="0" aria-label="返回" onclick="navigateTo('home')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+        <span class="chat-header__title">AI客服</span>
+      </div>
+      <div class="chat-header__transfer" onclick="handleTransfer()">转人工</div>
+    </div>
+
+    <!-- C-007: Context indicator -->
+    <div class="chat-context" id="chatContext">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2z"/></svg>
+      <span id="chatContextText">已理解 0 轮对话</span>
+    </div>
+
+    <div class="chat-messages" id="chatMessages" aria-live="polite"></div>
+
+    <!-- C-015: Smart recommendations -->
+    <div class="chat-smart-rec" id="chatSmartRec">
+      <div class="chat-smart-rec__header">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        智能推荐
+      </div>
+      <div class="chat-quick" id="smartRecChips" style="padding:0">
+        <button class="btn--pill" onclick="sendQuickReply('退换货政策')">退换货政策</button>
+        <button class="btn--pill" onclick="sendQuickReply('发货时间')">发货时间</button>
+        <button class="btn--pill" onclick="sendQuickReply('优惠券使用')">优惠券使用</button>
+      </div>
+    </div>
+
+    <div class="chat-quick" id="chatQuick">
+      <button class="btn--pill" onclick="sendQuickReply('查询订单')">查询订单</button>
+      <button class="btn--pill" onclick="sendQuickReply('物流查询')">物流查询</button>
+      <button class="btn--pill" onclick="sendQuickReply('退换货')">退换货</button>
+      <button class="btn--pill" onclick="sendQuickReply('商品推荐')">商品推荐</button>
+      <button class="btn--pill" onclick="sendQuickReply('优惠券')">优惠券</button>
+    </div>
+
+    <div class="chat-input-bar">
+      <input class="chat-input" type="text" placeholder="输入您的问题..." id="chatInput" onkeydown="if(event.key==='Enter')sendMessage()">
+      <!-- C-010: Voice button -->
+      <div style="position:relative">
+        <div class="voice-status" id="voiceStatus">
+          <span class="voice-status__dot"></span>
+          <span id="voiceStatusText">正在聆听...</span>
+        </div>
+        <div class="chat-voice" id="voiceBtn" role="button" tabindex="0" aria-label="语音输入" onclick="handleVoice()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+        </div>
+      </div>
+      <div class="chat-send" role="button" tabindex="0" aria-label="发送" onclick="sendMessage()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- ===== PAGE: ORDERS ===== -->
+  <!-- ============================================ -->
+  <div class="page" id="page-orders">
+    <div class="header">
+      <span class="header-title">我的订单</span>
+      <div class="header-action" role="button" tabindex="0" aria-label="筛选" onclick="showToast('订单筛选','success')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+      </div>
+    </div>
+    <div class="order-tabs" id="orderTabs">
+      <div class="order-tab active" data-tab="all" onclick="switchOrderTab('all')">全部</div>
+      <div class="order-tab" data-tab="pending" onclick="switchOrderTab('pending')">待发货</div>
+      <div class="order-tab" data-tab="shipped" onclick="switchOrderTab('shipped')">待收货</div>
+      <div class="order-tab" data-tab="done" onclick="switchOrderTab('done')">已完成</div>
+    </div>
+    <div class="order-list" id="orderList"></div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- ===== PAGE: AFTERSALE ===== -->
+  <!-- ============================================ -->
+  <div class="page" id="page-aftersale">
+    <div class="header">
+      <span class="header-title">售后服务</span>
+    </div>
+
+    <div class="aftersale-form" id="aftersaleForm">
+      <!-- C-017: AI auto-detection (shown when order is selected) -->
+      <div class="aftersale-ai" id="aftersaleAi" style="display:none">
+        <div class="aftersale-ai__title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2z"/></svg>
+          AI识别售后类型: 退货退款
+        </div>
+        <div class="aftersale-ai__confidence">置信度: 92%</div>
+        <div class="aftersale-ai__banner">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+          符合7天无理由退货条件，系统将自动通过您的申请
+        </div>
+        <div class="aftersale-ai__time">预计处理时间: 即时</div>
+        <div class="aftersale-progress">
+          <span class="aftersale-progress__step aftersale-progress__step--active">1 提交申请</span>
+          <span class="aftersale-progress__arrow">→</span>
+          <span class="aftersale-progress__step">2 AI审核(自动)</span>
+          <span class="aftersale-progress__arrow">→</span>
+          <span class="aftersale-progress__step">3 退款到账</span>
+        </div>
+      </div>
+
+      <div class="form-group stagger">
+        <label class="form-label">售后类型</label>
+        <div class="form-select-trigger" id="asTypeTrigger" role="combobox" aria-expanded="false" onclick="toggleSelect('asType')">
+          <span class="placeholder">请选择售后类型</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="form-select-options" id="asTypeOptions">
+          <div class="form-select-option" onclick="selectOption('asType','仅退款')">仅退款</div>
+          <div class="form-select-option" onclick="selectOption('asType','退货退款')">退货退款</div>
+          <div class="form-select-option" onclick="selectOption('asType','换货')">换货</div>
+          <div class="form-select-option" onclick="selectOption('asType','维修')">维修</div>
+        </div>
+      </div>
+
+      <div class="form-group stagger">
+        <label class="form-label">问题描述</label>
+        <textarea class="form-textarea" placeholder="请详细描述您遇到的问题..." id="asDesc"></textarea>
+      </div>
+
+      <div class="form-group stagger">
+        <label class="form-label">上传凭证</label>
+        <div class="form-upload" id="asUpload" onclick="simulateUpload()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <span class="form-upload__text">点击上传图片（最多3张）</span>
+        </div>
+        <div class="form-upload__preview" id="asUploadPreview"></div>
+        <!-- C-011: AI recognition result (shown after upload) -->
+        <div class="ai-recognition" id="aiRecognition" style="display:none">
+          <div class="ai-recognition__title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2z"/></svg>
+            AI识别结果
+          </div>
+          <div class="ai-recognition__row">
+            <span class="ai-recognition__label">商品:</span>
+            <span class="ai-recognition__value">玻尿酸保湿面膜</span>
+          </div>
+          <div class="ai-recognition__row">
+            <span class="ai-recognition__label">问题:</span>
+            <span class="ai-recognition__value">包装破损</span>
+          </div>
+          <div class="ai-recognition__confidence">识别置信度: 95%</div>
+          <button class="btn btn--primary" style="margin-top:var(--sp-2);font-size:var(--t-xs);padding:var(--sp-1) var(--sp-3)" onclick="showToast('已确认AI识别结果','success')">确认</button>
+        </div>
+      </div>
+
+      <div class="form-group stagger">
+        <label class="form-label">关联订单</label>
+        <div class="form-select-trigger" id="asOrderTrigger" role="combobox" aria-expanded="false" onclick="toggleSelect('asOrder')">
+          <span class="placeholder">请选择关联订单</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="form-select-options" id="asOrderOptions">
+          <div class="form-select-option" onclick="selectOption('asOrder','ORD20260413001')">ORD20260413001 - 护肤精华液</div>
+          <div class="form-select-option" onclick="selectOption('asOrder','ORD20260412003')">ORD20260412003 - 维生素C片</div>
+          <div class="form-select-option" onclick="selectOption('asOrder','ORD20260410008')">ORD20260410008 - 医用口罩</div>
+        </div>
+      </div>
+
+      <button class="form-submit stagger" onclick="submitAftersale()">提交申请</button>
+    </div>
+
+    <div class="aftersale-success" id="aftersaleSuccess">
+      <div class="aftersale-success__icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <div class="aftersale-success__title">提交成功</div>
+      <div class="aftersale-success__desc">您的售后申请已提交，预计1-2个工作日内处理</div>
+      <button class="btn btn--primary" style="margin-top:var(--sp-6)" onclick="resetAftersale()">返回</button>
+    </div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- ===== PAGE: LIVE ===== -->
+  <!-- ============================================ -->
+  <div class="page" id="page-live">
+    <div class="live-player">
+      <div class="live-player__bg"></div>
+      <div class="live-player__badge">直播中</div>
+      <div class="live-player__viewers">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        <span id="liveViewerCount">3,281</span>
+      </div>
+      <div class="live-player__play" role="button" tabindex="0" aria-label="播放" onclick="showToast('直播已开始','success')">
+        <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      </div>
+      <div class="live-danmaku" id="danmakuArea"></div>
+    </div>
+
+    <div class="live-info">
+      <div class="live-info__title">春季护肤专场 - 限时特惠</div>
+      <div class="live-info__host">
+        <div class="live-info__avatar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </div>
+        <span>美妆达人小美</span>
+        <span style="margin-left:auto;color:var(--c-primary);font-weight:600">关注</span>
+      </div>
+    </div>
+
+    <div class="live-chat" id="liveChat"></div>
+
+    <!-- C-004: Danmaku aggregation -->
+    <div class="live-danmaku-agg">
+      <div class="live-danmaku-agg__header">
+        相似问题已聚合
+        <span class="live-danmaku-agg__badge">5</span>
+      </div>
+      <div class="live-danmaku-agg__item">
+        <span>这个多少钱</span>
+        <span class="live-danmaku-agg__count">x12</span>
+      </div>
+      <div class="live-danmaku-agg__item">
+        <span>有优惠券吗</span>
+        <span class="live-danmaku-agg__count">x8</span>
+      </div>
+      <div class="live-danmaku-agg__item">
+        <span>什么时候发货</span>
+        <span class="live-danmaku-agg__count">x5</span>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section__header">
+        <span class="section__title">直播商品</span>
+      </div>
+      <div class="live-products" id="liveProducts"></div>
+    </div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- ===== PAGE: PROFILE ===== -->
+  <!-- ============================================ -->
+  <div class="page" id="page-profile">
+    <div class="profile-header">
+      <div class="profile-header__content">
+        <div class="profile-avatar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </div>
+        <div class="profile-info">
+          <div class="profile-name">张小美</div>
+          <div class="profile-membership">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            黄金会员
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="profile-stats stagger">
+      <div class="profile-stat" role="button" tabindex="0" onclick="navigateTo('orders')">
+        <div class="profile-stat__num font-display">12</div>
+        <div class="profile-stat__label">全部订单</div>
+      </div>
+      <div class="profile-stat" role="button" tabindex="0" onclick="showToast('查看优惠券','success')">
+        <div class="profile-stat__num font-display">5</div>
+        <div class="profile-stat__label">优惠券</div>
+      </div>
+      <div class="profile-stat" role="button" tabindex="0" onclick="showToast('查看收藏','success')">
+        <div class="profile-stat__num font-display">28</div>
+        <div class="profile-stat__label">收藏</div>
+      </div>
+      <div class="profile-stat" role="button" tabindex="0" onclick="showToast('查看足迹','success')">
+        <div class="profile-stat__num font-display">156</div>
+        <div class="profile-stat__label">足迹</div>
+      </div>
+    </div>
+
+    <div class="star-rating stagger">
+      <div class="star-rating__star star-rating__star--filled" onclick="setRating(1)">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      </div>
+      <div class="star-rating__star star-rating__star--filled" onclick="setRating(2)">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      </div>
+      <div class="star-rating__star star-rating__star--filled" onclick="setRating(3)">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      </div>
+      <div class="star-rating__star star-rating__star--filled" onclick="setRating(4)">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      </div>
+      <div class="star-rating__star star-rating__star--empty" onclick="setRating(5)">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      </div>
+      <span class="star-rating__label" id="ratingLabel">4.0 分</span>
+    </div>
+
+    <!-- C-013: Feedback tags -->
+    <div class="feedback-tags stagger">
+      <span class="feedback-tag" onclick="toggleFeedbackTag(this)">响应很快</span>
+      <span class="feedback-tag" onclick="toggleFeedbackTag(this)">态度友好</span>
+      <span class="feedback-tag" onclick="toggleFeedbackTag(this)">解决了问题</span>
+      <span class="feedback-tag" onclick="toggleFeedbackTag(this)">没有解决</span>
+      <span class="feedback-tag" onclick="toggleFeedbackTag(this)">需要改进</span>
+    </div>
+    <textarea class="feedback-textarea stagger" placeholder="请输入您的建议..."></textarea>
+    <button class="feedback-submit stagger" onclick="submitFeedback()">提交反馈</button>
+
+    <div class="profile-menu stagger">
+      <div class="profile-menu__item" role="button" tabindex="0" onclick="navigateTo('orders')">
+        <div class="profile-menu__icon profile-menu__icon--coral">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        </div>
+        <span class="profile-menu__text">我的订单</span>
+        <svg class="profile-menu__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+      <div class="profile-menu__item" role="button" tabindex="0" onclick="navigateTo('aftersale')">
+        <div class="profile-menu__icon profile-menu__icon--gold">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <span class="profile-menu__text">售后服务</span>
+        <svg class="profile-menu__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+      <div class="profile-menu__item" role="button" tabindex="0" onclick="showToast('地址管理','success')">
+        <div class="profile-menu__icon profile-menu__icon--gray">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        </div>
+        <span class="profile-menu__text">地址管理</span>
+        <svg class="profile-menu__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+      <div class="profile-menu__item" role="button" tabindex="0" onclick="showToast('帮助中心','success')">
+        <div class="profile-menu__icon profile-menu__icon--gray">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </div>
+        <span class="profile-menu__text">帮助中心</span>
+        <svg class="profile-menu__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+      <!-- C-006: Privacy settings -->
+      <div class="profile-menu__item" role="button" tabindex="0" onclick="openPrivacyPanel()">
+        <div class="profile-menu__icon profile-menu__icon--coral">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </div>
+        <span class="profile-menu__text">隐私设置</span>
+        <svg class="profile-menu__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+      <!-- C-009: Multi-channel sync -->
+      <div class="profile-menu__item" role="button" tabindex="0" onclick="openChannelPanel()">
+        <div class="profile-menu__icon profile-menu__icon--gold">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        </div>
+        <span class="profile-menu__text">多渠道同步</span>
+        <svg class="profile-menu__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+      <div class="profile-menu__item" role="button" tabindex="0" onclick="showToast('设置页面','success')">
+        <div class="profile-menu__icon profile-menu__icon--gray">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        </div>
+        <span class="profile-menu__text">设置</span>
+        <svg class="profile-menu__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TAB BAR ===== -->
+  <div class="tab-bar" id="tabBar">
+    <div class="tab-item active" data-page="home" role="tab" aria-label="首页" onclick="navigateTo('home')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <span class="tab-label">首页</span>
+    </div>
+    <div class="tab-item" data-page="chat" role="tab" aria-label="客服" onclick="navigateTo('chat')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      <span class="tab-label">客服</span>
+    </div>
+    <div class="tab-item" data-page="live" role="tab" aria-label="直播" onclick="navigateTo('live')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+      <span class="tab-label">直播</span>
+    </div>
+    <div class="tab-item" data-page="orders" role="tab" aria-label="订单" onclick="navigateTo('orders')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+      <span class="tab-label">订单</span>
+    </div>
+    <div class="tab-item" data-page="profile" role="tab" aria-label="我的" onclick="navigateTo('profile')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <span class="tab-label">我的</span>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ============================================ */
+/* ===== DATA ===== */
+/* ============================================ */
+const PRODUCTS = [
+  {id:1,name:'玻尿酸保湿精华液 30ml',price:168,sold:2341,cat:'护肤',selling:'深层补水 修复屏障'},
+  {id:2,name:'医用级N95口罩 50只装',price:79,sold:8920,cat:'医疗',selling:'医疗级防护 透气舒适'},
+  {id:3,name:'维生素C咀嚼片 120粒',price:128,sold:5612,cat:'保健',selling:'天然VC 增强免疫'},
+  {id:4,name:'氨基酸洁面乳 150ml',price:89,sold:3456,cat:'护肤',selling:'温和清洁 不紧绷'},
+  {id:5,name:'胶原蛋白肽粉 20袋',price:198,sold:1890,cat:'保健',selling:'深海鱼胶原 弹润透亮'},
+  {id:6,name:'防晒隔离霜 SPF50+',price:139,sold:4230,cat:'护肤',selling:'高倍防晒 清透不假白'},
+  {id:7,name:'红外线体温计',price:59,sold:6780,cat:'医疗',selling:'秒速测温 精准可靠'},
+  {id:8,name:'益生菌固体饮料 30袋',price:158,sold:2990,cat:'保健',selling:'活性益生菌 调节肠胃'},
+];
+
+const ORDERS = [
+  {id:'ORD20260413001',name:'玻尿酸保湿精华液 30ml',spec:'30ml / 正装',price:168,qty:1,status:'shipped',statusText:'待收货',time:'2026-04-13',phone:'13812341234',address:'上海市浦东新区张江高科技园区碧波路690号'},
+  {id:'ORD20260412003',name:'维生素C咀嚼片 120粒',spec:'120粒 / 盒装',price:128,qty:2,status:'pending',statusText:'待发货',time:'2026-04-12',phone:'13956785678',address:'北京市朝阳区望京SOHO T1 1206'},
+  {id:'ORD20260410008',name:'医用级N95口罩 50只装',spec:'50只 / 独立包装',price:79,qty:3,status:'done',statusText:'已完成',time:'2026-04-10',phone:'13690129012',address:'广州市天河区珠江新城花城大道68号'},
+  {id:'ORD20240408012',name:'氨基酸洁面乳 150ml',spec:'150ml / 管装',price:89,qty:1,status:'done',statusText:'已完成',time:'2026-04-08',phone:'13734563456',address:'深圳市南山区科技园南区'},
+  {id:'ORD20240405015',name:'胶原蛋白肽粉 20袋',spec:'20袋 / 盒装',price:198,qty:1,status:'cancelled',statusText:'已取消',time:'2026-04-05',phone:'13578907890',address:'杭州市西湖区文三路478号'},
+];
+
+const CONSULTS = [
+  {title:'精华液使用方法咨询',time:'今天 14:32'},
+  {title:'订单 ORD20260413001 物流查询',time:'今天 10:15'},
+  {title:'维生素C片服用剂量',time:'昨天 16:40'},
+  {title:'口罩质量反馈',time:'04-11 09:22'},
+];
+
+const LIVE_PRODUCTS = [
+  {name:'玻尿酸保湿精华液 30ml',price:168},
+  {name:'胶原蛋白肽粉 20袋',price:198},
+  {name:'防晒隔离霜 SPF50+',price:139},
+  {name:'氨基酸洁面乳 150ml',price:89},
+];
+
+const DANMAKU_TEXTS = [
+  '这个精华液好用吗？','已下单！','主播推荐的好物','太划算了吧',
+  '买两瓶更优惠','物流很快的','敏感肌可以用吗？','回购第三次了',
+  '这个价格太香了','有赠品吗','主播声音好好听','赶紧抢',
+];
+
+const LIVE_CHAT_MSGS = [
+  {name:'小丽',text:'这个精华液好用吗？敏感肌'},
+  {name:'护肤达人',text:'非常好用！温和不刺激'},
+  {name:'买买买',text:'已下单两瓶'},
+  {name:'新手小白',text:'第一次来，有新人优惠吗？'},
+  {name:'老顾客',text:'回购第三次了，真的推荐'},
+];
+
+/* ============================================ */
+/* ===== ROUTING ===== */
+/* ============================================ */
+let currentPage = 'home';
+let chatInitialized = false;
+
+function navigateTo(page) {
+  if (page === currentPage) return;
+  const prev = document.getElementById('page-' + currentPage);
+  const next = document.getElementById('page-' + page);
+  if (!prev || !next) return;
+
+  prev.classList.remove('active');
+  setTimeout(() => {
+    next.classList.add('active');
+    next.scrollTop = 0;
+  }, 30);
+
+  currentPage = page;
+  window.location.hash = '#/user/' + page;
+
+  /* Update tab bar */
+  document.querySelectorAll('.tab-item').forEach(t => {
+    t.classList.toggle('active', t.dataset.page === page);
+  });
+
+  /* Show/hide tab bar */
+  const tabBar = document.getElementById('tabBar');
+  tabBar.style.display = (page === 'chat') ? 'none' : 'flex';
+
+  /* Init chat on first visit */
+  if (page === 'chat' && !chatInitialized) {
+    initChat();
+    chatInitialized = true;
+  }
+
+  /* Start danmaku when visiting live */
+  if (page === 'live') startDanmaku();
+}
+
+function handleHash() {
+  const hash = window.location.hash.replace('#/user/', '') || 'home';
+  if (hash !== currentPage) navigateTo(hash);
+}
+window.addEventListener('hashchange', handleHash);
+
+/* ============================================ */
+/* ===== TOAST ===== */
+/* ============================================ */
+function showToast(msg, type = 'success') {
+  const container = document.getElementById('toastContainer');
+  const toast = document.createElement('div');
+  toast.className = 'toast toast--' + type;
+  toast.textContent = msg;
+  container.appendChild(toast);
+  setTimeout(() => toast.remove(), 2600);
+}
+
+/* ============================================ */
+/* ===== HOME: RENDER ===== */
+/* ============================================ */
+function renderHome() {
+  /* Recommend products */
+  const scroll = document.getElementById('recommendScroll');
+  scroll.innerHTML = PRODUCTS.map(p => `
+    <div class="recommend-item" role="button" tabindex="0" onclick="navigateTo('chat')">
+      <div class="recommend-item__img">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+      </div>
+      <div class="recommend-item__name">${p.name}</div>
+      <div style="display:flex;align-items:baseline;justify-content:space-between">
+        <span class="recommend-item__price">${p.price}</span>
+        <span class="recommend-item__sold">已售${p.sold > 1000 ? (p.sold/1000).toFixed(1)+'k' : p.sold}</span>
+      </div>
+    </div>
+  `).join('');
+
+  /* Recent consults */
+  const list = document.getElementById('consultList');
+  list.innerHTML = CONSULTS.map(c => `
+    <div class="consult-item" onclick="navigateTo('chat')">
+      <div class="consult-item__info">
+        <div class="consult-item__title">${c.title}</div>
+        <div class="consult-item__time">${c.time}</div>
+      </div>
+      <svg class="consult-item__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+    </div>
+  `).join('');
+}
+
+/* Countdown */
+function startCountdown() {
+  let total = 2 * 3600 + 34 * 60 + 56;
+  setInterval(() => {
+    total = total > 0 ? total - 1 : 9999;
+    const h = String(Math.floor(total / 3600)).padStart(2, '0');
+    const m = String(Math.floor((total % 3600) / 60)).padStart(2, '0');
+    const s = String(total % 60).padStart(2, '0');
+    document.getElementById('cdH').textContent = h;
+    document.getElementById('cdM').textContent = m;
+    document.getElementById('cdS').textContent = s;
+  }, 1000);
+}
+
+function handleHomeSearch() {
+  const val = document.getElementById('homeSearch').value.trim();
+  if (val) {
+    showToast('搜索: ' + val, 'success');
+    navigateTo('chat');
+  }
+}
+
+/* ============================================ */
+/* ===== CHAT ENGINE ===== */
+/* ============================================ */
+let chatRoundCount = 0;
+let chatContext = [];
+let voiceListening = false;
+
+const chatResponses = {
+  '查询订单': () => {
+    const order = ORDERS[0];
+    const maskedPhone = maskPhone(order.phone);
+    return {
+      text: '为您查询到最近的订单：',
+      card: order,
+      maskedPhone: maskedPhone
+    };
+  },
+  '物流查询': () => {
+    const order = ORDERS[0];
+    return {
+      text: '您的订单物流信息如下：',
+      card: { ...order, logistics: '顺丰速运 SF1234567890，预计明天送达' },
+      maskedPhone: maskPhone(order.phone)
+    };
+  },
+  '退换货': () => ({
+    text: '我可以帮您处理售后问题。请问您需要哪种类型的售后？\n\n• 仅退款\n• 退货退款\n• 换货',
+    action: 'aftersale'
+  }),
+  '商品推荐': () => {
+    const recs = PRODUCTS.slice(0, 3);
+    return {
+      text: '根据您的浏览记录和偏好，为您推荐:',
+      products: recs,
+      isEnhanced: true
+    };
+  },
+  '优惠券': () => ({
+    text: '您当前有 5 张可用优惠券：\n\n• 满200减30（全品类）\n• 满100减15（护肤品类）\n• 满50减8（医疗用品）\n• 新人专享9折券\n• 会员生日券8折'
+  }),
+  '退换货政策': () => ({
+    text: '我们的退换货政策如下：\n\n• 7天无理由退货：商品完好可免费退换\n• 15天质量问题：免费退换并补偿运费\n• 30天换货：同款商品可申请换货\n• 定制商品不支持无理由退换'
+  }),
+  '发货时间': () => ({
+    text: '发货时间说明：\n\n• 工作日16:00前下单，当天发货\n• 16:00后下单，次日发货\n• 节假日顺延\n• 预售商品按页面标注时间发货'
+  }),
+  '优惠券使用': () => ({
+    text: '优惠券使用规则：\n\n• 下单时在结算页选择可用优惠券\n• 每单限用一张优惠券\n• 优惠券不可叠加使用\n• 部分特价商品不支持优惠券'
+  }),
+  '查看物流': () => ({
+    text: '您的订单物流信息如下：',
+    card: { ...ORDERS[0], logistics: '顺丰速运 SF1234567890，预计明天送达' },
+    maskedPhone: maskPhone(ORDERS[0].phone)
+  }),
+  '申请售后': () => ({
+    text: '我可以帮您处理售后问题。请问您需要哪种类型的售后？\n\n• 仅退款\n• 退货退款\n• 换货',
+    action: 'aftersale'
+  }),
+  '催发货': () => ({
+    text: '已为您催促商家尽快发货，商家会在24小时内处理。您的订单预计最晚3天内发出。'
+  }),
+  '直播商品': () => ({
+    text: '当前直播间热门商品：',
+    products: LIVE_PRODUCTS.map(p => ({name:p.name,price:p.price,selling:'直播专享价',cat:'直播'})),
+    isEnhanced: true
+  }),
+  '优惠活动': () => ({
+    text: '当前优惠活动：\n\n• 春季护肤节：满300减50\n• 新人首单立减20元\n• 会员专享：全场9折\n• 限时秒杀：每天10:00开抢'
+  }),
+  '限量抢购': () => ({
+    text: '今日限量抢购：\n\n• 玻尿酸精华液 限时价 ¥128（原价¥168）\n• 仅剩 32 件\n• 活动截止 23:59'
+  }),
+};
+
+const defaultResponses = [
+  '好的，我来帮您查看一下，请稍等。',
+  '感谢您的咨询！关于这个问题，我建议您查看商品详情页的说明，或者我可以为您转接人工客服。',
+  '明白了，让我为您处理。请问还有其他需要帮助的吗？',
+  '这个问题很常见，您可以在"我的订单"中查看详细信息。如需进一步帮助，请随时告诉我。',
+];
+
+/* Context-aware keywords for smart recommendations */
+const smartRecMap = {
+  'default': [
+    {text:'退换货政策',action:'退换货政策'},
+    {text:'发货时间',action:'发货时间'},
+    {text:'优惠券使用',action:'优惠券使用'}
+  ],
+  'order': [
+    {text:'查看物流',action:'查看物流'},
+    {text:'申请售后',action:'申请售后'},
+    {text:'催发货',action:'催发货'}
+  ],
+  'live': [
+    {text:'直播商品',action:'直播商品'},
+    {text:'优惠活动',action:'优惠活动'},
+    {text:'限量抢购',action:'限量抢购'}
+  ],
+  'recommend': [
+    {text:'护肤精选',action:'商品推荐'},
+    {text:'保健好物',action:'商品推荐'},
+    {text:'查看更多',action:'商品推荐'}
+  ]
+};
+
+function maskPhone(phone) {
+  if (!phone) return '';
+  return phone.substring(0,3) + '****' + phone.substring(7);
+}
+
+function updateSmartRecs(context) {
+  const chips = document.getElementById('smartRecChips');
+  if (!chips) return;
+  const recs = smartRecMap[context] || smartRecMap['default'];
+  chips.innerHTML = recs.map(r =>
+    `<button class="btn--pill" onclick="sendQuickReply('${r.action}')">${r.text}</button>`
+  ).join('');
+}
+
+function updateContextIndicator() {
+  const el = document.getElementById('chatContextText');
+  if (el) el.textContent = '已理解 ' + chatRoundCount + ' 轮对话';
+}
+
+function detectContext(text) {
+  if (text.includes('订单') || text.includes('物流') || text.includes('发货') || text.includes('快递')) return 'order';
+  if (text.includes('直播') || text.includes('抢购') || text.includes('优惠')) return 'live';
+  if (text.includes('推荐') || text.includes('商品') || text.includes('有什么')) return 'recommend';
+  return 'default';
+}
+
+function isContextualReference(text) {
+  const refs = ['那个','这个','多少钱','怎么样','还有吗','上面的','之前','刚才'];
+  return refs.some(r => text.includes(r));
+}
+
+function initChat() {
+  addMessage('system', 'AI客服已连接，为您服务');
+  setTimeout(() => {
+    addMessage('ai', '您好！我是AI智能客服，很高兴为您服务。请问有什么可以帮您的？\n\n您可以点击下方快捷按钮快速咨询，或直接输入您的问题。');
+  }, 500);
+}
+
+function addMessage(type, text, extra) {
+  const container = document.getElementById('chatMessages');
+  const div = document.createElement('div');
+  div.className = 'chat-msg chat-msg--' + type;
+
+  let html = '';
+  if (type === 'system') {
+    html = `<div class="chat-bubble">${text}</div>`;
+  } else {
+    /* C-007: Show context note for contextual references */
+    if (type === 'ai' && extra && extra.showContextNote) {
+      html += `<div class="chat-context-note">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="10" height="10"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2z"/></svg>
+        基于上文理解
+      </div>`;
+    }
+    html += `<div class="chat-bubble">${text.replace(/\n/g, '<br>')}</div>`;
+    if (extra) {
+      if (extra.card) {
+        const c = extra.card;
+        const statusClass = c.status === 'shipped' ? 'shipping' : 'delivered';
+        const maskedPhone = extra.maskedPhone || maskPhone(c.phone);
+        html += `
+          <div class="chat-order-card">
+            <div class="chat-order-card__row">
+              <span class="chat-order-card__label">订单号</span>
+              <span class="chat-order-card__value font-display">${c.id}</span>
+              <span class="chat-order-card__status chat-order-card__status--${statusClass}">${c.statusText}</span>
+            </div>
+            <div class="chat-order-card__row">
+              <span class="chat-order-card__label">商品</span>
+              <span class="chat-order-card__value">${c.name}</span>
+            </div>
+            <div class="chat-order-card__row">
+              <span class="chat-order-card__label">金额</span>
+              <span class="chat-order-card__value font-display" style="color:var(--c-primary)">¥${c.price}</span>
+            </div>
+            ${c.phone ? `<div class="chat-order-card__row"><span class="chat-order-card__label">电话</span><span class="chat-order-card__value">${maskedPhone}</span></div>` : ''}
+            ${c.logistics ? `<div class="chat-order-card__row"><span class="chat-order-card__label">物流</span><span class="chat-order-card__value">${c.logistics}</span></div>` : ''}
+          </div>`;
+      }
+      if (extra.products) {
+        if (extra.isEnhanced) {
+          /* C-016: Enhanced product recommendation cards */
+          html += `<div style="margin-top:4px;font-size:var(--t-xs);color:var(--c-muted)">会员等级: 金卡 | 偏好: 护肤美妆</div>`;
+          extra.products.forEach((p, i) => {
+            const coupon = i === 0 ? '<div class="product-rec-card__coupon">满200减30</div>' : '';
+            html += `
+              <div class="product-rec-card" onclick="showToast('已加入购物车','success')">
+                <div class="product-rec-card__top">
+                  <div class="product-rec-card__img">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+                  </div>
+                  <div class="product-rec-card__info">
+                    <div class="product-rec-card__name">${p.name}</div>
+                    <div class="product-rec-card__price">${p.price}</div>
+                    ${p.selling ? `<div class="product-rec-card__selling">核心卖点: ${p.selling}</div>` : ''}
+                  </div>
+                </div>
+                ${coupon}
+                <div class="product-rec-card__why" onclick="event.stopPropagation();this.classList.toggle('open');this.nextElementSibling.style.display=this.classList.contains('open')?'block':'none'">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+                  为什么推荐
+                </div>
+                <div class="product-rec-card__why-detail">基于您近期浏览了${3 + i}次同类商品，与您的偏好标签"${p.cat || '护肤'}"高度匹配。</div>
+              </div>`;
+          });
+          /* C-008: Preference note */
+          html += `<div class="pref-note">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            根据您的偏好推荐
+          </div>`;
+        } else {
+          html += '<div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">';
+          extra.products.forEach(p => {
+            html += `
+              <div style="flex:1;min-width:100px;padding:8px;background:var(--c-primary-pale);border-radius:10px;cursor:pointer" onclick="showToast('已加入购物车','success')">
+                <div style="font-size:11px;font-weight:500;margin-bottom:4px">${p.name}</div>
+                <div class="font-display" style="font-size:14px;font-weight:600;color:var(--c-primary)">¥${p.price}</div>
+              </div>`;
+          });
+          html += '</div>';
+        }
+      }
+    }
+    /* C-010: Speaker icon for AI messages */
+    if (type === 'ai') {
+      html += `<div class="chat-speaker" onclick="showToast('语音播放中...','success')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+        <span>播放语音</span>
+      </div>`;
+    }
+    /* C-014: Read receipt */
+    html += `<div class="chat-receipt">${type === 'ai' ? '✓ 已读' : '✓ 已发送'}</div>`;
+  }
+  div.innerHTML = html;
+  container.appendChild(div);
+  container.scrollTop = container.scrollHeight;
+}
+
+function showTyping() {
+  const container = document.getElementById('chatMessages');
+  const div = document.createElement('div');
+  div.className = 'typing-indicator';
+  div.id = 'typingIndicator';
+  div.innerHTML = '<div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>';
+  container.appendChild(div);
+  container.scrollTop = container.scrollHeight;
+}
+
+function hideTyping() {
+  const el = document.getElementById('typingIndicator');
+  if (el) el.remove();
+}
+
+function sendMessage() {
+  const input = document.getElementById('chatInput');
+  const text = input.value.trim();
+  if (!text) return;
+  input.value = '';
+
+  /* Track context */
+  chatContext.push(text);
+  const isContextRef = isContextualReference(text);
+  const ctx = detectContext(text);
+
+  addMessage('user', text);
+  chatRoundCount++;
+  updateContextIndicator();
+  updateSmartRecs(ctx);
+
+  showTyping();
+  const delay = 800 + Math.random() * 600;
+  setTimeout(() => {
+    hideTyping();
+    const response = getAIResponse(text);
+    if (isContextRef && chatRoundCount > 1) {
+      response.extra = response.extra || {};
+      response.extra.showContextNote = true;
+    }
+    addMessage('ai', response.text, response.extra);
+  }, delay);
+}
+
+function sendQuickReply(text) {
+  addMessage('user', text);
+  chatRoundCount++;
+  chatContext.push(text);
+  updateContextIndicator();
+
+  const ctx = detectContext(text);
+  updateSmartRecs(ctx);
+
+  showTyping();
+  const delay = 600 + Math.random() * 400;
+  setTimeout(() => {
+    hideTyping();
+    const handler = chatResponses[text];
+    if (handler) {
+      const result = handler();
+      addMessage('ai', result.text, result);
+    } else {
+      addMessage('ai', defaultResponses[Math.floor(Math.random() * defaultResponses.length)]);
+    }
+  }, delay);
+}
+
+function getAIResponse(text) {
+  for (const [key, handler] of Object.entries(chatResponses)) {
+    if (text.includes(key) || key.includes(text)) {
+      const result = handler();
+      return { text: result.text, extra: result };
+    }
+  }
+  if (text.includes('订单') || text.includes('order')) {
+    return chatResponses['查询订单']();
+  }
+  if (text.includes('物流') || text.includes('快递') || text.includes('配送')) {
+    return chatResponses['物流查询']();
+  }
+  if (text.includes('退') || text.includes('换货') || text.includes('售后')) {
+    return chatResponses['退换货']();
+  }
+  if (text.includes('推荐') || text.includes('有什么')) {
+    return chatResponses['商品推荐']();
+  }
+  if (text.includes('优惠') || text.includes('券') || text.includes('折扣')) {
+    return chatResponses['优惠券']();
+  }
+  /* Handle contextual references */
+  if (isContextualReference(text) && chatContext.length > 1) {
+    const prevText = chatContext[chatContext.length - 2];
+    if (prevText.includes('订单') || prevText.includes('商品') || prevText.includes('精华') || prevText.includes('价格')) {
+      return { text: '这款玻尿酸保湿精华液目前售价 ¥168，当前有满200减30的优惠券可以使用，到手价 ¥138。' };
+    }
+    return { text: '根据您之前提到的问题，我来为您进一步解答。请问您需要更详细的信息吗？' };
+  }
+  return {
+    text: defaultResponses[Math.floor(Math.random() * defaultResponses.length)]
+  };
+}
+
+function handleTransfer() {
+  addMessage('system', '正在为您转接人工客服...');
+  showTyping();
+  setTimeout(() => {
+    hideTyping();
+    addMessage('system', '人工客服小王已接入，请描述您的问题。');
+    setTimeout(() => {
+      addMessage('ai', '您好，我是人工客服小王。很高兴为您服务，请问有什么可以帮您的？');
+    }, 600);
+  }, 1500);
+}
+
+/* ============================================ */
+/* ===== ORDERS ===== */
+/* ============================================ */
+let currentOrderTab = 'all';
+
+function renderOrders() {
+  const list = document.getElementById('orderList');
+  const filtered = currentOrderTab === 'all'
+    ? ORDERS
+    : ORDERS.filter(o => o.status === currentOrderTab);
+
+  if (filtered.length === 0) {
+    list.innerHTML = '<div style="text-align:center;padding:var(--sp-12) 0;color:var(--c-muted);font-size:var(--t-sm)">暂无相关订单</div>';
+    return;
+  }
+
+  list.innerHTML = filtered.map(o => {
+    const statusMap = {
+      pending: 'order-item__status--pending',
+      shipped: 'order-item__status--shipped',
+      done: 'order-item__status--done',
+      cancelled: 'order-item__status--cancelled',
+    };
+    return `
+      <div class="order-item" role="button" tabindex="0" onclick="showOrderDetail('${o.id}')">
+        <div class="order-item__top">
+          <span class="order-item__id">${o.id}</span>
+          <span class="order-item__status ${statusMap[o.status]}">${o.statusText}</span>
+        </div>
+        <div class="order-item__body">
+          <div class="order-item__thumb">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+          </div>
+          <div class="order-item__info">
+            <div class="order-item__name">${o.name}</div>
+            <div class="order-item__spec">${o.spec}</div>
+            <div class="order-item__bottom">
+              <span class="order-item__price">${o.price}</span>
+              <span class="order-item__qty">x${o.qty}</span>
+            </div>
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function switchOrderTab(tab) {
+  currentOrderTab = tab;
+  document.querySelectorAll('.order-tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.tab === tab);
+  });
+  renderOrders();
+}
+
+function showOrderDetail(orderId) {
+  const order = ORDERS.find(o => o.id === orderId);
+  if (!order) return;
+
+  document.getElementById('panelTitle').textContent = '订单详情';
+  const body = document.getElementById('panelBody');
+  body.innerHTML = `
+    <div class="order-detail__section">
+      <div class="order-detail__label">订单编号</div>
+      <div class="order-detail__value font-display">${order.id}</div>
+    </div>
+    <div class="order-detail__section">
+      <div class="order-detail__label">下单时间</div>
+      <div class="order-detail__value">${order.time}</div>
+    </div>
+    <div class="order-detail__section">
+      <div class="order-detail__label">商品信息</div>
+      <div class="order-detail__value">${order.name}</div>
+      <div style="font-size:var(--t-xs);color:var(--c-muted);margin-top:2px">${order.spec} x${order.qty}</div>
+    </div>
+    <div class="order-detail__section">
+      <div class="order-detail__label">订单金额</div>
+      <div class="order-detail__value font-display" style="font-size:var(--t-md);color:var(--c-primary)">¥${order.price * order.qty}</div>
+    </div>
+    <div class="order-detail__section">
+      <div class="order-detail__label">订单状态</div>
+      <div class="order-detail__value" style="color:var(--c-primary);font-weight:600">${order.statusText}</div>
+    </div>
+    ${order.status === 'shipped' ? `
+    <div class="order-detail__logistics">
+      <div class="order-detail__logistics-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+      </div>
+      <div class="order-detail__logistics-text">
+        <strong>顺丰速运</strong><br>
+        运单号：SF1234567890<br>
+        预计明天 14:00 前送达
+      </div>
+    </div>` : ''}
+    <!-- C-012: Self-service buttons -->
+    <div class="self-service" id="selfServiceBtns">
+      ${order.status !== 'cancelled' ? '<button class="self-service__btn" onclick="showAddressForm()">修改地址</button>' : ''}
+      ${order.status === 'pending' ? '<button class="self-service__btn self-service__btn--danger" onclick="showCancelConfirm()">取消订单</button>' : ''}
+      ${order.status === 'pending' ? '<button class="self-service__btn" onclick="showToast(\'已催促商家尽快发货\',\'success\')">催发货</button>' : ''}
+      ${order.status === 'shipped' ? '<button class="self-service__btn self-service__btn--primary" onclick="showToast(\'已确认收货\',\'success\');closeAllPanels()">确认收货</button>' : ''}
+      ${order.status === 'done' ? '<button class="self-service__btn" onclick="navigateTo(\'aftersale\');closeAllPanels()">申请售后</button>' : ''}
+      <button class="self-service__btn" onclick="navigateTo('chat');closeAllPanels()">联系客服</button>
+    </div>
+    <div id="addressFormContainer"></div>
+  `;
+  openPanel();
+}
+
+/* C-012: Address form */
+function showAddressForm() {
+  const container = document.getElementById('addressFormContainer');
+  if (!container) return;
+  container.innerHTML = `
+    <div class="address-form">
+      <div class="address-form__field">
+        <input class="address-form__input" placeholder="收货人姓名" value="张小美">
+      </div>
+      <div class="address-form__field">
+        <input class="address-form__input" placeholder="手机号码" value="138****1234">
+      </div>
+      <div class="address-form__field">
+        <input class="address-form__input" placeholder="详细地址" value="上海市浦东新区张江高科技园区碧波路690号">
+      </div>
+      <div class="address-form__actions">
+        <button class="btn btn--ghost" style="flex:1;font-size:var(--t-xs)" onclick="document.getElementById('addressFormContainer').innerHTML=''">取消</button>
+        <button class="btn btn--primary" style="flex:1;font-size:var(--t-xs)" onclick="showToast('地址已修改','success');document.getElementById('addressFormContainer').innerHTML=''">保存</button>
+      </div>
+    </div>
+  `;
+}
+
+/* C-012: Cancel confirm dialog */
+function showCancelConfirm() {
+  document.getElementById('confirmTitle').textContent = '取消订单';
+  document.getElementById('confirmDesc').textContent = '确定取消此订单？';
+  document.getElementById('confirmOk').onclick = function() {
+    closeConfirm();
+    closeAllPanels();
+    showToast('订单已取消', 'success');
+  };
+  document.getElementById('confirmDialog').classList.add('open');
+}
+
+function closeConfirm() {
+  document.getElementById('confirmDialog').classList.remove('open');
+}
+
+/* ============================================ */
+/* ===== PANEL ===== */
+/* ============================================ */
+function openPanel() {
+  document.getElementById('overlay').classList.add('open');
+  document.getElementById('slidePanel').classList.add('open');
+  document.getElementById('slidePanel').setAttribute('aria-expanded','true');
+}
+
+function closeAllPanels() {
+  document.getElementById('overlay').classList.remove('open');
+  document.getElementById('slidePanel').classList.remove('open');
+  document.getElementById('slidePanel').setAttribute('aria-expanded','false');
+}
+
+/* ============================================ */
+/* ===== AFTERSALE ===== */
+/* ============================================ */
+let uploadCount = 0;
+const selectStates = { asType: null, asOrder: null };
+
+function toggleSelect(id) {
+  const options = document.getElementById(id + 'Options');
+  const trigger = document.getElementById(id + 'Trigger');
+  const isOpen = options.classList.contains('open');
+
+  /* Close all selects first */
+  document.querySelectorAll('.form-select-options').forEach(o => { o.classList.remove('open'); });
+  document.querySelectorAll('.form-select-trigger').forEach(t => { t.classList.remove('open'); t.setAttribute('aria-expanded','false'); });
+
+  if (!isOpen) {
+    options.classList.add('open');
+    trigger.classList.add('open');
+    trigger.setAttribute('aria-expanded','true');
+  }
+}
+
+function selectOption(id, value) {
+  selectStates[id] = value;
+  const trigger = document.getElementById(id + 'Trigger');
+  trigger.innerHTML = `
+    <span style="color:var(--c-text)">${value}</span>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+  `;
+
+  /* Mark selected */
+  document.querySelectorAll(`#${id}Options .form-select-option`).forEach(opt => {
+    opt.classList.toggle('selected', opt.textContent.trim() === value);
+  });
+
+  toggleSelect(id);
+
+  /* C-017: Show AI auto-detection when order is selected */
+  if (id === 'asOrder') {
+    const aiPanel = document.getElementById('aftersaleAi');
+    if (aiPanel) aiPanel.style.display = 'block';
+    /* Auto-fill type */
+    setTimeout(() => {
+      selectOption('asType', '退货退款');
+    }, 500);
+  }
+}
+
+function simulateUpload() {
+  if (uploadCount >= 3) {
+    showToast('最多上传3张图片', 'error');
+    return;
+  }
+  uploadCount++;
+  const preview = document.getElementById('asUploadPreview');
+  const thumb = document.createElement('div');
+  thumb.className = 'form-upload__thumb';
+  thumb.innerHTML = `
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+    <div class="form-upload__remove" onclick="event.stopPropagation();this.parentElement.remove();uploadCount--">x</div>
+  `;
+  preview.appendChild(thumb);
+  showToast('图片已上传', 'success');
+  /* C-011: Show AI recognition after upload */
+  setTimeout(() => {
+    const aiRec = document.getElementById('aiRecognition');
+    if (aiRec) aiRec.style.display = 'block';
+  }, 800);
+}
+
+function submitAftersale() {
+  if (!selectStates.asType) {
+    showToast('请选择售后类型', 'error');
+    return;
+  }
+  if (!document.getElementById('asDesc').value.trim()) {
+    showToast('请填写问题描述', 'error');
+    return;
+  }
+  if (!selectStates.asOrder) {
+    showToast('请选择关联订单', 'error');
+    return;
+  }
+
+  document.getElementById('aftersaleForm').style.display = 'none';
+  document.getElementById('aftersaleSuccess').classList.add('show');
+  showToast('售后申请已提交', 'success');
+}
+
+function resetAftersale() {
+  document.getElementById('aftersaleForm').style.display = 'block';
+  document.getElementById('aftersaleSuccess').classList.remove('show');
+  document.getElementById('asDesc').value = '';
+  document.getElementById('asUploadPreview').innerHTML = '';
+  uploadCount = 0;
+  selectStates.asType = null;
+  selectStates.asOrder = null;
+  /* Reset AI panels */
+  const aiPanel = document.getElementById('aftersaleAi');
+  if (aiPanel) aiPanel.style.display = 'none';
+  const aiRec = document.getElementById('aiRecognition');
+  if (aiRec) aiRec.style.display = 'none';
+  /* Reset triggers */
+  ['asType', 'asOrder'].forEach(id => {
+    const trigger = document.getElementById(id + 'Trigger');
+    trigger.innerHTML = `
+      <span class="placeholder">${id === 'asType' ? '请选择售后类型' : '请选择关联订单'}</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+    `;
+  });
+}
+
+/* ============================================ */
+/* ===== LIVE ===== */
+/* ============================================ */
+let danmakuInterval = null;
+let liveChatInterval = null;
+
+function renderLive() {
+  /* Products */
+  const products = document.getElementById('liveProducts');
+  products.innerHTML = LIVE_PRODUCTS.map(p => `
+    <div class="live-product" role="button" tabindex="0">
+      <div class="live-product__img">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+      </div>
+      <div class="live-product__info">
+        <div class="live-product__name">${p.name}</div>
+        <div class="live-product__price">${p.price}</div>
+      </div>
+      <div class="live-product__btn" onclick="showToast('已加入购物车','success')">购买</div>
+    </div>
+  `).join('');
+
+  /* Initial chat */
+  const chat = document.getElementById('liveChat');
+  chat.innerHTML = LIVE_CHAT_MSGS.map(m => `
+    <div class="live-chat-msg">
+      <span class="live-chat-msg__name">${m.name}：</span>
+      <span class="live-chat-msg__text">${m.text}</span>
+    </div>
+  `).join('');
+}
+
+function startDanmaku() {
+  if (danmakuInterval) return;
+  const area = document.getElementById('danmakuArea');
+
+  danmakuInterval = setInterval(() => {
+    const text = DANMAKU_TEXTS[Math.floor(Math.random() * DANMAKU_TEXTS.length)];
+    const item = document.createElement('div');
+    item.className = 'danmaku-item';
+    item.textContent = text;
+    item.style.top = (Math.random() * 60) + 'px';
+    item.style.animationDuration = (6 + Math.random() * 4) + 's';
+    area.appendChild(item);
+    setTimeout(() => item.remove(), 12000);
+  }, 1500);
+
+  /* Live chat messages */
+  liveChatInterval = setInterval(() => {
+    const chat = document.getElementById('liveChat');
+    const names = ['小丽', '护肤达人', '买买买', '新手小白', '老顾客', '美妆控', '小王'];
+    const texts = ['好用！', '已下单', '推荐！', '太划算了', '回购中', '敏感肌可以用吗', '物流很快', '有赠品吗', '主播多介绍下'];
+    const name = names[Math.floor(Math.random() * names.length)];
+    const text = texts[Math.floor(Math.random() * texts.length)];
+    const msg = document.createElement('div');
+    msg.className = 'live-chat-msg';
+    msg.innerHTML = `<span class="live-chat-msg__name">${name}：</span><span class="live-chat-msg__text">${text}</span>`;
+    chat.appendChild(msg);
+    chat.scrollTop = chat.scrollHeight;
+  }, 3000);
+
+  /* Update viewer count */
+  setInterval(() => {
+    const el = document.getElementById('liveViewerCount');
+    if (el) {
+      let count = parseInt(el.textContent.replace(/,/g, ''));
+      count += Math.floor(Math.random() * 10) - 3;
+      el.textContent = count.toLocaleString();
+    }
+  }, 5000);
+}
+
+/* ============================================ */
+/* ===== PROFILE: RATING ===== */
+/* ============================================ */
+let currentRating = 4;
+
+function setRating(n) {
+  currentRating = n;
+  const stars = document.querySelectorAll('.star-rating__star');
+  stars.forEach((star, i) => {
+    star.className = 'star-rating__star ' + (i < n ? 'star-rating__star--filled' : 'star-rating__star--empty');
+  });
+  document.getElementById('ratingLabel').textContent = n + '.0 分';
+  showToast('感谢您的 ' + n + ' 星评价', 'success');
+}
+
+/* ============================================ */
+/* ===== VOICE INTERACTION (C-010) ===== */
+/* ============================================ */
+function handleVoice() {
+  if (voiceListening) return;
+  voiceListening = true;
+  const btn = document.getElementById('voiceBtn');
+  const status = document.getElementById('voiceStatus');
+  const statusText = document.getElementById('voiceStatusText');
+
+  btn.classList.add('listening');
+  status.classList.add('show');
+  statusText.textContent = '正在聆听...';
+
+  setTimeout(() => {
+    statusText.textContent = '识别中...';
+  }, 2000);
+
+  setTimeout(() => {
+    btn.classList.remove('listening');
+    status.classList.remove('show');
+    voiceListening = false;
+    document.getElementById('chatInput').value = '我想查询一下最近的订单';
+    showToast('语音识别完成', 'success');
+  }, 3000);
+}
+
+/* ============================================ */
+/* ===== MARK ALL READ (C-014) ===== */
+/* ============================================ */
+function markAllRead() {
+  const dot = document.getElementById('bellDot');
+  if (dot) dot.style.display = 'none';
+  showToast('已全部标记为已读', 'success');
+}
+
+/* ============================================ */
+/* ===== FEEDBACK (C-013) ===== */
+/* ============================================ */
+function toggleFeedbackTag(el) {
+  el.classList.toggle('selected');
+}
+
+function submitFeedback() {
+  const selected = document.querySelectorAll('.feedback-tag.selected');
+  const textarea = document.querySelector('.feedback-textarea');
+  if (selected.length === 0 && !textarea.value.trim()) {
+    showToast('请至少选择一项反馈或填写建议', 'error');
+    return;
+  }
+  showToast('感谢您的反馈！', 'success');
+  selected.forEach(t => t.classList.remove('selected'));
+  textarea.value = '';
+}
+
+/* ============================================ */
+/* ===== PRIVACY PANEL (C-006) ===== */
+/* ============================================ */
+function openPrivacyPanel() {
+  document.getElementById('panelTitle').textContent = '隐私设置';
+  const body = document.getElementById('panelBody');
+  body.innerHTML = `
+    <div class="toggle-row">
+      <div>
+        <div class="toggle-row__label">手机号脱敏</div>
+        <div class="toggle-row__desc">在订单和对话中隐藏手机号中间四位</div>
+      </div>
+      <div class="toggle-switch on" role="switch" tabindex="0" aria-checked="true" onclick="this.classList.toggle('on');this.setAttribute('aria-checked',this.classList.contains('on'));showToast(this.classList.contains('on')?'已开启手机号脱敏':'已关闭手机号脱敏','success')">
+        <div class="toggle-switch__knob"></div>
+      </div>
+    </div>
+    <div class="toggle-row">
+      <div>
+        <div class="toggle-row__label">地址信息保护</div>
+        <div class="toggle-row__desc">对非本人隐藏详细收货地址</div>
+      </div>
+      <div class="toggle-switch on" role="switch" tabindex="0" aria-checked="true" onclick="this.classList.toggle('on');this.setAttribute('aria-checked',this.classList.contains('on'));showToast(this.classList.contains('on')?'已开启地址保护':'已关闭地址保护','success')">
+        <div class="toggle-switch__knob"></div>
+      </div>
+    </div>
+    <div class="toggle-row">
+      <div>
+        <div class="toggle-row__label">对话记录加密</div>
+        <div class="toggle-row__desc">使用端到端加密保护聊天记录</div>
+      </div>
+      <div class="toggle-switch" role="switch" tabindex="0" aria-checked="false" onclick="this.classList.toggle('on');this.setAttribute('aria-checked',this.classList.contains('on'));showToast(this.classList.contains('on')?'已开启对话加密':'已关闭对话加密','success')">
+        <div class="toggle-switch__knob"></div>
+      </div>
+    </div>
+    <a class="privacy-link" onclick="showToast('隐私协议页面','success')">查看隐私协议</a>
+  `;
+  openPanel();
+}
+
+/* ============================================ */
+/* ===== CHANNEL SYNC PANEL (C-009) ===== */
+/* ============================================ */
+function openChannelPanel() {
+  document.getElementById('panelTitle').textContent = '多渠道同步';
+  const body = document.getElementById('panelBody');
+  body.innerHTML = `
+    <div class="channel-item">
+      <span class="channel-item__dot channel-item__dot--on"></span>
+      <span class="channel-item__name">APP</span>
+      <span class="channel-item__status">已连接</span>
+      <div class="toggle-switch on" role="switch" tabindex="0" aria-checked="true" onclick="this.classList.toggle('on');this.setAttribute('aria-checked',this.classList.contains('on'))">
+        <div class="toggle-switch__knob"></div>
+      </div>
+    </div>
+    <div class="channel-item">
+      <span class="channel-item__dot channel-item__dot--on"></span>
+      <span class="channel-item__name">小程序</span>
+      <span class="channel-item__status">已连接</span>
+      <div class="toggle-switch on" role="switch" tabindex="0" aria-checked="true" onclick="this.classList.toggle('on');this.setAttribute('aria-checked',this.classList.contains('on'))">
+        <div class="toggle-switch__knob"></div>
+      </div>
+    </div>
+    <div class="channel-item">
+      <span class="channel-item__dot channel-item__dot--off"></span>
+      <span class="channel-item__name">官网</span>
+      <span class="channel-item__status">未连接</span>
+      <div class="toggle-switch" role="switch" tabindex="0" aria-checked="false" onclick="this.classList.toggle('on');this.setAttribute('aria-checked',this.classList.contains('on'));showToast(this.classList.contains('on')?'已启用官网同步':'已关闭官网同步','success')">
+        <div class="toggle-switch__knob"></div>
+      </div>
+    </div>
+    <div class="channel-item">
+      <span class="channel-item__dot channel-item__dot--on"></span>
+      <span class="channel-item__name">微信公众号</span>
+      <span class="channel-item__status">已连接</span>
+      <div class="toggle-switch on" role="switch" tabindex="0" aria-checked="true" onclick="this.classList.toggle('on');this.setAttribute('aria-checked',this.classList.contains('on'))">
+        <div class="toggle-switch__knob"></div>
+      </div>
+    </div>
+    <div class="toggle-row" style="margin-top:var(--sp-4)">
+      <div>
+        <div class="toggle-row__label">会话记录跨渠道同步</div>
+        <div class="toggle-row__desc">在所有已连接渠道间同步聊天记录</div>
+      </div>
+      <div class="toggle-switch on" role="switch" tabindex="0" aria-checked="true" onclick="this.classList.toggle('on');this.setAttribute('aria-checked',this.classList.contains('on'));showToast(this.classList.contains('on')?'已开启跨渠道同步':'已关闭跨渠道同步','success')">
+        <div class="toggle-switch__knob"></div>
+      </div>
+    </div>
+  `;
+  openPanel();
+}
+
+/* ============================================ */
+/* ===== INIT ===== */
+/* ============================================ */
+function init() {
+  renderHome();
+  renderOrders();
+  renderLive();
+  startCountdown();
+  handleHash();
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>

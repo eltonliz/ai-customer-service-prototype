@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI智能客服</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Noto+Sans+SC:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+
+:root{
+  --bg:oklch(0.13 0.01 260);
+  --text:oklch(0.95 0 0);
+  --text-dim:oklch(0.6 0.01 260);
+  --accent:oklch(0.55 0.2 260);
+  --secondary:oklch(0.65 0.15 145);
+  --tertiary:oklch(0.7 0.15 55);
+  --row-hover:oklch(0.18 0.015 260);
+  --border:oklch(0.25 0.01 260);
+}
+
+html{font-size:16px;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+
+body{
+  font-family:'Noto Sans SC',system-ui,-apple-system,sans-serif;
+  font-weight:400;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  background:var(--bg);
+  color:var(--text);
+  overflow-x:hidden;
+}
+
+/* ── Layout ── */
+.page{
+  width:100%;
+  max-width:680px;
+  margin:0 auto;
+  padding:0 32px;
+  display:flex;
+  flex-direction:column;
+  min-height:100vh;
+}
+
+/* ── Header / Hero ── */
+.hero{
+  padding:120px 0 64px;
+  text-align:center;
+  opacity:0;
+  animation:fadeIn .8s ease forwards;
+}
+
+.hero-title{
+  font-family:'Instrument Serif',Georgia,serif;
+  font-size:clamp(42px,8vw,64px);
+  font-weight:400;
+  letter-spacing:-0.02em;
+  line-height:1.1;
+  color:var(--text);
+}
+
+.hero-sub{
+  margin-top:16px;
+  font-size:15px;
+  font-weight:300;
+  color:var(--text-dim);
+  letter-spacing:0.04em;
+}
+
+.hero-divider{
+  width:32px;
+  height:1px;
+  background:var(--accent);
+  margin:40px auto 0;
+  opacity:.6;
+}
+
+/* ── Navigation Rows ── */
+.nav-section{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+}
+
+.nav-row{
+  display:flex;
+  align-items:center;
+  gap:20px;
+  padding:28px 24px;
+  border-radius:12px;
+  text-decoration:none;
+  color:var(--text);
+  transition:background .3s ease;
+  cursor:pointer;
+  opacity:0;
+  animation:slideUp .6s ease forwards;
+}
+.nav-row:nth-child(1){animation-delay:.15s}
+.nav-row:nth-child(2){animation-delay:.3s}
+.nav-row:nth-child(3){animation-delay:.45s}
+
+.nav-row:hover{
+  background:var(--row-hover);
+}
+
+.nav-row-icon{
+  flex-shrink:0;
+  width:44px;
+  height:44px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:10px;
+}
+
+.nav-row-icon svg{
+  width:22px;
+  height:22px;
+}
+
+.nav-row:nth-child(1) .nav-row-icon{background:oklch(0.55 0.2 260 / 0.12);color:var(--accent)}
+.nav-row:nth-child(2) .nav-row-icon{background:oklch(0.65 0.15 145 / 0.12);color:var(--secondary)}
+.nav-row:nth-child(3) .nav-row-icon{background:oklch(0.7 0.15 55 / 0.12);color:var(--tertiary)}
+
+.nav-row-body{
+  flex:1;
+  min-width:0;
+}
+
+.nav-row-title{
+  font-size:16px;
+  font-weight:500;
+  letter-spacing:0.01em;
+  margin-bottom:4px;
+}
+
+.nav-row-desc{
+  font-size:13px;
+  font-weight:300;
+  color:var(--text-dim);
+  line-height:1.5;
+}
+
+.nav-row-meta{
+  flex-shrink:0;
+  text-align:right;
+}
+
+.nav-row-count{
+  font-size:12px;
+  font-weight:400;
+  color:var(--text-dim);
+  letter-spacing:0.02em;
+  margin-bottom:4px;
+}
+
+.nav-row-arrow{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:32px;
+  height:32px;
+  border-radius:50%;
+  background:oklch(0.22 0.01 260);
+  transition:transform .3s ease,background .3s ease;
+}
+
+.nav-row-arrow svg{
+  width:16px;
+  height:16px;
+  color:var(--text-dim);
+  transition:color .3s ease;
+}
+
+.nav-row:hover .nav-row-arrow{
+  transform:translateX(4px);
+  background:oklch(0.28 0.02 260);
+}
+
+.nav-row:hover .nav-row-arrow svg{
+  color:var(--text);
+}
+
+/* ── Footer ── */
+.footer{
+  padding:48px 0 40px;
+  text-align:center;
+  opacity:0;
+  animation:fadeIn .8s ease .6s forwards;
+}
+
+.footer-lines{
+  font-size:13px;
+  font-weight:300;
+  color:var(--text-dim);
+  letter-spacing:0.03em;
+  line-height:1.8;
+}
+
+.footer-version{
+  margin-top:16px;
+  font-size:11px;
+  font-weight:400;
+  color:oklch(0.4 0.01 260);
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+}
+
+/* ── Animations ── */
+@keyframes fadeIn{
+  from{opacity:0}
+  to{opacity:1}
+}
+
+@keyframes slideUp{
+  from{opacity:0;transform:translateY(16px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+/* ── Responsive ── */
+@media(max-width:480px){
+  .page{padding:0 20px}
+  .hero{padding:96px 0 48px}
+  .nav-row{padding:22px 18px;gap:16px}
+  .nav-row-desc{display:none}
+  .nav-row-meta{display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+}
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <header class="hero">
+    <h1 class="hero-title">AI智能客服</h1>
+    <p class="hero-sub">一站式智能客服解决方案</p>
+    <div class="hero-divider"></div>
+  </header>
+
+  <nav class="nav-section">
+
+    <!-- C端用户 -->
+    <a class="nav-row" href="c-end.html">
+      <div class="nav-row-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+          <circle cx="12" cy="7" r="4"/>
+        </svg>
+      </div>
+      <div class="nav-row-body">
+        <div class="nav-row-title">C端用户</div>
+        <div class="nav-row-desc">面向消费者的智能问答与自助服务</div>
+      </div>
+      <div class="nav-row-meta">
+        <div class="nav-row-count">17 个功能</div>
+        <div class="nav-row-arrow">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        </div>
+      </div>
+    </a>
+
+    <!-- B端商家 -->
+    <a class="nav-row" href="merchant-end.html">
+      <div class="nav-row-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+          <polyline points="9 22 9 12 15 12 15 22"/>
+        </svg>
+      </div>
+      <div class="nav-row-body">
+        <div class="nav-row-title">B端商家</div>
+        <div class="nav-row-desc">商家后台管理与运营数据看板</div>
+      </div>
+      <div class="nav-row-meta">
+        <div class="nav-row-count">26 个功能</div>
+        <div class="nav-row-arrow">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        </div>
+      </div>
+    </a>
+
+    <!-- 平台管理 -->
+    <a class="nav-row" href="platform-end.html">
+      <div class="nav-row-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        </svg>
+      </div>
+      <div class="nav-row-body">
+        <div class="nav-row-title">平台管理</div>
+        <div class="nav-row-desc">系统配置、权限管理与全局监控</div>
+      </div>
+      <div class="nav-row-meta">
+        <div class="nav-row-count">19 个功能</div>
+        <div class="nav-row-arrow">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        </div>
+      </div>
+    </a>
+
+  </nav>
+
+  <footer class="footer">
+    <p class="footer-lines">覆盖 医疗 / 百货 / 知识付费 / 直播 四大业务线</p>
+    <p class="footer-version">V4.5</p>
+  </footer>
+
+</div>
+
+</body>
+</html>
