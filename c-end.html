@@ -80,11 +80,14 @@ body{
   -webkit-overflow-scrolling:touch;
   opacity:0;transform:translateY(12px);
   pointer-events:none;
-  transition:opacity 280ms var(--ease-out),transform 280ms var(--ease-out);
+  visibility:hidden;
+  transition:opacity 280ms var(--ease-out),transform 280ms var(--ease-out),visibility 0s 280ms;
   padding-bottom:calc(var(--sp-8) + var(--safe-b));
 }
 .page.active{
   opacity:1;transform:translateY(0);pointer-events:auto;
+  visibility:visible;
+  transition:opacity 280ms var(--ease-out),transform 280ms var(--ease-out),visibility 0s 0s;
 }
 .page::-webkit-scrollbar{display:none}
 
@@ -182,8 +185,9 @@ body{
   max-height:80%;
   overflow-y:auto;
   box-shadow:0 -8px 40px oklch(0.15 0.02 60 / 0.1);
+  display:none;
 }
-.slide-panel.open{transform:translateY(0)}
+.slide-panel.open{transform:translateY(0);display:block}
 .slide-panel__handle{
   width:36px;height:4px;border-radius:2px;
   background:var(--c-border);margin:var(--sp-3) auto 0;
@@ -208,8 +212,9 @@ body{
   position:absolute;inset:0;background:var(--c-overlay);
   z-index:190;opacity:0;pointer-events:none;
   transition:opacity 300ms var(--ease-out);
+  display:none;
 }
-.overlay.open{opacity:1;pointer-events:auto}
+.overlay.open{opacity:1;pointer-events:auto;display:block}
 
 /* ===== BUTTONS ===== */
 .btn{
@@ -1307,11 +1312,12 @@ body{
   position:absolute;inset:0;
   background:var(--c-overlay);
   z-index:300;
-  display:flex;align-items:center;justify-content:center;
+  display:none;
+  align-items:center;justify-content:center;
   opacity:0;pointer-events:none;
   transition:opacity 200ms var(--ease-out);
 }
-.confirm-dialog.open{opacity:1;pointer-events:auto}
+.confirm-dialog.open{opacity:1;pointer-events:auto;display:flex}
 .confirm-dialog__box{
   width:280px;background:var(--c-surface);
   border-radius:16px;padding:var(--sp-6) var(--sp-4) var(--sp-4);
@@ -1997,11 +2003,11 @@ let chatInitialized = false;
 
 function navigateTo(page) {
   if (page === currentPage) return;
-  const prev = document.getElementById('page-' + currentPage);
   const next = document.getElementById('page-' + page);
-  if (!prev || !next) return;
+  if (!next) return;
 
-  prev.classList.remove('active');
+  /* Hide all pages first, then show target */
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   setTimeout(() => {
     next.classList.add('active');
     next.scrollTop = 0;
