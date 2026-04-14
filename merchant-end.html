@@ -384,11 +384,8 @@ h1,h2,h3,.metric-value,.big-num,.stat-value,.health-value{font-family:'Instrumen
     <!-- PAGE: Dashboard -->
     <div class="page active" id="page-dashboard">
       <h2 class="section-title">数据概览</h2>
-      <div class="metrics-grid">
-        <div class="metric-row"><div class="metric-label">会话总量</div><div class="metric-value display">12,847</div><div class="metric-change up">+12.3% 较上周</div></div>
-        <div class="metric-row"><div class="metric-label">解决率</div><div class="metric-value display">94.6%</div><div class="metric-change up">+2.1% 较上周</div></div>
-        <div class="metric-row"><div class="metric-label">平均响应</div><div class="metric-value display">1.2s</div><div class="metric-change up">-8.5% 较上周</div></div>
-        <div class="metric-row"><div class="metric-label">满意度</div><div class="metric-value display">4.8</div><div class="metric-change up">+0.3 较上周</div></div>
+      <div class="charts-row">
+        <div class="chart-box"><h3>核心指标</h3><canvas id="dash-metrics-bar" height="120"></canvas></div>
       </div>
       <div class="charts-row">
         <div class="chart-box"><h3>7日会话趋势</h3><canvas id="dash-bar-chart"></canvas></div>
@@ -396,11 +393,8 @@ h1,h2,h3,.metric-value,.big-num,.stat-value,.health-value{font-family:'Instrumen
       </div>
       <div class="mt-24">
         <h3 class="section-title">实时运营</h3>
-        <div class="metrics-grid" style="grid-template-columns:repeat(4,1fr)">
-          <div class="metric-row"><div class="metric-label">在线库存</div><div class="metric-value display">1,234<span class="text-sm text-muted" style="font-family:'Noto Sans SC'">件</span></div><div class="metric-change up"><svg viewBox="0 0 12 12" width="10" height="10" style="vertical-align:middle;margin-right:2px"><path d="M6 2l4 5H2z" fill="oklch(0.65 0.15 145)"/></svg>3.2% 较昨日</div></div>
-          <div class="metric-row"><div class="metric-label">今日GMV</div><div class="metric-value display">¥56,789</div><div class="metric-change up"><svg viewBox="0 0 12 12" width="10" height="10" style="vertical-align:middle;margin-right:2px"><path d="M6 2l4 5H2z" fill="oklch(0.65 0.15 145)"/></svg>8.5% 较昨日</div></div>
-          <div class="metric-row"><div class="metric-label">今日销量</div><div class="metric-value display">234<span class="text-sm text-muted" style="font-family:'Noto Sans SC'">件</span></div><div class="metric-change up"><svg viewBox="0 0 12 12" width="10" height="10" style="vertical-align:middle;margin-right:2px"><path d="M6 2l4 5H2z" fill="oklch(0.65 0.15 145)"/></svg>5.1% 较昨日</div></div>
-          <div class="metric-row"><div class="metric-label">客单价</div><div class="metric-value display">¥242.6</div><div class="metric-change down"><svg viewBox="0 0 12 12" width="10" height="10" style="vertical-align:middle;margin-right:2px"><path d="M6 10l4-5H2z" fill="oklch(0.6 0.2 25)"/></svg>1.8% 较昨日</div></div>
+        <div class="charts-row">
+          <div class="chart-box"><h3>实时运营</h3><canvas id="dash-ops-bar" height="120"></canvas></div>
         </div>
       </div>
       <div class="alert-list">
@@ -770,10 +764,8 @@ h1,h2,h3,.metric-value,.big-num,.stat-value,.health-value{font-family:'Instrumen
     <!-- PAGE: Cost -->
     <div class="page" id="page-cost">
       <h2 class="section-title">成本分析</h2>
-      <div class="metrics-grid" style="grid-template-columns:repeat(3,1fr)">
-        <div class="metric-row"><div class="metric-label">本月总成本</div><div class="metric-value display">¥12,480</div><div class="metric-change down">+5.2% 较上月</div></div>
-        <div class="metric-row"><div class="metric-label">单次会话成本</div><div class="metric-value display">¥0.97</div><div class="metric-change up">-3.1% 较上月</div></div>
-        <div class="metric-row"><div class="metric-label">AI 占比</div><div class="metric-value display">78.3%</div><div class="metric-change up">+2.4% 较上月</div></div>
+      <div class="charts-row">
+        <div class="chart-box"><h3>成本概览</h3><canvas id="cost-metrics-doughnut" height="180"></canvas></div>
       </div>
       <div class="charts-row">
         <div class="chart-box"><h3>月度成本趋势</h3><canvas id="cost-bar-chart"></canvas></div>
@@ -876,11 +868,8 @@ h1,h2,h3,.metric-value,.big-num,.stat-value,.health-value{font-family:'Instrumen
         <div class="health-item"><div class="health-label">回答准确率</div><div class="health-value" style="color:var(--success)">94.6%</div><div class="health-bar"><div class="health-bar-fill" style="width:94.6%;background:var(--success)"></div></div></div>
         <div class="health-item"><div class="health-label">平均响应时间</div><div class="health-value" style="color:var(--primary)">1.2s</div><div class="health-bar"><div class="health-bar-fill" style="width:88%;background:var(--primary)"></div></div></div>
       </div>
-      <div class="metrics-grid mt-24" style="grid-template-columns:repeat(4,1fr)">
-        <div class="metric-row"><div class="metric-label">知识条目总数</div><div class="metric-value display">1,247</div></div>
-        <div class="metric-row"><div class="metric-label">本月新增</div><div class="metric-value display">86</div></div>
-        <div class="metric-row"><div class="metric-label">待审核</div><div class="metric-value display">12</div></div>
-        <div class="metric-row"><div class="metric-label">近7日命中次数</div><div class="metric-value display">8,432</div></div>
+      <div class="charts-row mt-24">
+        <div class="chart-box"><h3>知识库指标</h3><canvas id="monitor-metrics-bar" height="120"></canvas></div>
       </div>
       <h3 class="section-title mt-24">知识缺口列表</h3>
       <div class="table-wrap"><table class="data-table"><thead><tr><th>问题</th><th>出现次数</th><th>最后出现</th><th>状态</th><th>操作</th></tr></thead><tbody>
@@ -1018,11 +1007,8 @@ h1,h2,h3,.metric-value,.big-num,.stat-value,.health-value{font-family:'Instrumen
           <button class="btn btn-primary btn-sm" onclick="openModal('addStoreModal')">添加店铺</button>
         </div>
       </div>
-      <div class="metrics-grid" style="grid-template-columns:repeat(4,1fr)">
-        <div class="metric-row"><div class="metric-label">店铺总数</div><div class="metric-value display">3</div></div>
-        <div class="metric-row"><div class="metric-label">在线店铺</div><div class="metric-value display" style="color:var(--success)">2</div></div>
-        <div class="metric-row"><div class="metric-label">总客服数</div><div class="metric-value display">18</div></div>
-        <div class="metric-row"><div class="metric-label">今日总对话量</div><div class="metric-value display">1,456</div></div>
+      <div class="charts-row">
+        <div class="chart-box"><h3>多店铺概览</h3><canvas id="store-metrics-bar" height="120"></canvas></div>
       </div>
       <div class="table-wrap mt-16"><table class="data-table"><thead><tr><th>店铺名称</th><th>平台</th><th>状态</th><th>客服数</th><th>今日对话量</th><th>最后同步</th><th>同步状态</th><th>操作</th></tr></thead><tbody>
         <tr>
@@ -1061,11 +1047,9 @@ h1,h2,h3,.metric-value,.big-num,.stat-value,.health-value{font-family:'Instrumen
     <!-- PAGE: Training Data (M-006) -->
     <div class="page" id="page-training-data">
       <h2 class="section-title">AI训练数据管理</h2>
-      <div class="metrics-grid" style="grid-template-columns:repeat(4,1fr)">
-        <div class="metric-row"><div class="metric-label">总数据量</div><div class="metric-value display">12,345<span class="text-sm text-muted" style="font-family:'Noto Sans SC'">条</span></div></div>
-        <div class="metric-row"><div class="metric-label">已标注</div><div class="metric-value display" style="color:var(--success)">8,567<span class="text-sm text-muted" style="font-family:'Noto Sans SC'">条</span></div></div>
-        <div class="metric-row"><div class="metric-label">待标注</div><div class="metric-value display" style="color:var(--warning)">3,778<span class="text-sm text-muted" style="font-family:'Noto Sans SC'">条</span></div></div>
-        <div class="metric-row"><div class="metric-label">准确率</div><div class="metric-value display" style="color:var(--primary)">94.2%</div><div class="metric-change up">+1.8% 较上月</div></div>
+      <div class="charts-row">
+        <div class="chart-box"><h3>数据标注分布</h3><canvas id="training-metrics-doughnut" height="180"></canvas></div>
+        <div class="chart-box"><h3>数据量趋势</h3><canvas id="training-metrics-bar" height="180"></canvas></div>
       </div>
       <div class="flex items-center justify-between mt-16 mb-16">
         <div class="flex items-center gap-8">
@@ -1145,11 +1129,8 @@ h1,h2,h3,.metric-value,.big-num,.stat-value,.health-value{font-family:'Instrumen
         </div>
         <div class="toolbar-right"><button class="btn btn-outline btn-sm" onclick="showToast('报表已导出')">导出</button></div>
       </div>
-      <div class="metrics-grid" style="grid-template-columns:repeat(4,1fr)">
-        <div class="metric-row"><div class="metric-label">本月客诉总量</div><div class="metric-value display">347</div><div class="metric-change down">+12.5% 环比</div></div>
-        <div class="metric-row"><div class="metric-label">环比变化</div><div class="metric-value display" style="color:var(--danger)">+12.5%</div><div class="metric-change down">较上月</div></div>
-        <div class="metric-row"><div class="metric-label">平均处理时长</div><div class="metric-value display">4.2<span class="text-sm text-muted" style="font-family:'Noto Sans SC'">小时</span></div><div class="metric-change up">-8.3% 较上月</div></div>
-        <div class="metric-row"><div class="metric-label">满意度</div><div class="metric-value display" style="color:var(--success)">82.3%</div><div class="metric-change up">+3.1% 较上月</div></div>
+      <div class="charts-row">
+        <div class="chart-box"><h3>客诉核心指标</h3><canvas id="complaint-metrics-bar" height="120"></canvas></div>
       </div>
       <div class="charts-row mt-24">
         <div class="chart-box"><h3>客诉趋势 (近7日)</h3><canvas id="complaint-bar-chart"></canvas></div>
@@ -1553,10 +1534,13 @@ function route() {
   });
   document.getElementById('topbar-title').textContent = pageTitles[hash] || hash;
   // Initialize charts when page loads
-  if (hash === 'dashboard') initDashCharts();
+  if (hash === 'dashboard') { initDashCharts(); initDashMetricsCharts(); initDashOpsCharts(); }
   if (hash === 'data') initDataCharts();
-  if (hash === 'cost') initCostCharts();
-  if (hash === 'complaint-analysis') initComplaintCharts();
+  if (hash === 'cost') { initCostCharts(); initCostMetricsCharts(); }
+  if (hash === 'monitor') initMonitorMetricsCharts();
+  if (hash === 'multi-store') initStoreMetricsCharts();
+  if (hash === 'training-data') initTrainingMetricsCharts();
+  if (hash === 'complaint-analysis') { initComplaintCharts(); initComplaintMetricsCharts(); }
   // Resize charts after page becomes visible
   resizeChartsForPage(hash);
 }
@@ -2315,6 +2299,8 @@ function resizeChartsForPage(hash) {
     if (hash === 'dashboard') {
       if (dashBarChart) dashBarChart.resize();
       if (dashDoughnutChart) dashDoughnutChart.resize();
+      if (dashMetricsBarChart) dashMetricsBarChart.resize();
+      if (dashOpsBarChart) dashOpsBarChart.resize();
     }
     if (hash === 'data') {
       if (dataBarChart) dataBarChart.resize();
@@ -2323,10 +2309,22 @@ function resizeChartsForPage(hash) {
     if (hash === 'cost') {
       if (costBarChart) costBarChart.resize();
       if (costDoughnutChart) costDoughnutChart.resize();
+      if (costMetricsDoughnutChart) costMetricsDoughnutChart.resize();
+    }
+    if (hash === 'monitor') {
+      if (monitorMetricsBarChart) monitorMetricsBarChart.resize();
+    }
+    if (hash === 'multi-store') {
+      if (storeMetricsBarChart) storeMetricsBarChart.resize();
+    }
+    if (hash === 'training-data') {
+      if (trainingMetricsDoughnutChart) trainingMetricsDoughnutChart.resize();
+      if (trainingMetricsBarChart) trainingMetricsBarChart.resize();
     }
     if (hash === 'complaint-analysis') {
       if (complaintBarChart) complaintBarChart.resize();
       if (complaintDoughnutChart) complaintDoughnutChart.resize();
+      if (complaintMetricsBarChart) complaintMetricsBarChart.resize();
     }
   });
 }
@@ -2651,6 +2649,243 @@ function submitSchedule() {
 /* ═══════════════════════════════════════════
    CHART OBSERVER: (removed - using direct init in route)
    ═══════════════════════════════════════════ */
+
+/* ═══════════════════════════════════════════
+   METRICS CHARTS: Dashboard core metrics bar
+   ═══════════════════════════════════════════ */
+let dashMetricsBarChart;
+function initDashMetricsCharts() {
+  if (typeof Chart === 'undefined') return;
+  if (dashMetricsBarChart) return;
+  const ctx = document.getElementById('dash-metrics-bar');
+  if (!ctx) return;
+  dashMetricsBarChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['会话总量', '解决率(%)', '平均响应(s)', '满意度'],
+      datasets: [{
+        label: '核心指标',
+        data: [12847, 94.6, 1.2, 4.8],
+        backgroundColor: [chartPrimary, chartSuccess, chartWarning, chartPrimaryLight],
+        borderRadius: 4,
+        borderSkipped: false
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { display: false }, border: { display: false } },
+        y: { grid: { color: 'oklch(0.94 0.005 250)' }, border: { display: false } }
+      }
+    }
+  });
+}
+
+/* ═══════════════════════════════════════════
+   METRICS CHARTS: Dashboard ops bar
+   ═══════════════════════════════════════════ */
+let dashOpsBarChart;
+function initDashOpsCharts() {
+  if (typeof Chart === 'undefined') return;
+  if (dashOpsBarChart) return;
+  const ctx = document.getElementById('dash-ops-bar');
+  if (!ctx) return;
+  dashOpsBarChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['在线库存', '今日GMV', '今日销量', '客单价'],
+      datasets: [{
+        label: '实时运营',
+        data: [1234, 56789, 234, 242.6],
+        backgroundColor: [chartPrimary, chartSuccess, chartWarning, chartPrimaryLight],
+        borderRadius: 4,
+        borderSkipped: false
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { display: false }, border: { display: false } },
+        y: { grid: { color: 'oklch(0.94 0.005 250)' }, border: { display: false }, ticks: { callback: v => v >= 1000 ? (v/1000).toFixed(0) + 'k' : v } }
+      }
+    }
+  });
+}
+
+/* ═══════════════════════════════════════════
+   METRICS CHARTS: Cost doughnut
+   ═══════════════════════════════════════════ */
+let costMetricsDoughnutChart;
+function initCostMetricsCharts() {
+  if (typeof Chart === 'undefined') return;
+  if (costMetricsDoughnutChart) return;
+  const ctx = document.getElementById('cost-metrics-doughnut');
+  if (!ctx) return;
+  costMetricsDoughnutChart = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: ['AI成本', '人工成本'],
+      datasets: [{ data: [78.3, 21.7], backgroundColor: [chartPrimary, chartWarning], borderWidth: 0 }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      cutout: '65%',
+      plugins: {
+        legend: { position: 'bottom', labels: { padding: 12, usePointStyle: true, pointStyleWidth: 8 } },
+        tooltip: { callbacks: { label: (ctx) => ctx.label + ': ' + ctx.parsed + '%' } }
+      }
+    }
+  });
+}
+
+/* ═══════════════════════════════════════════
+   METRICS CHARTS: Monitor bar
+   ═══════════════════════════════════════════ */
+let monitorMetricsBarChart;
+function initMonitorMetricsCharts() {
+  if (typeof Chart === 'undefined') return;
+  if (monitorMetricsBarChart) return;
+  const ctx = document.getElementById('monitor-metrics-bar');
+  if (!ctx) return;
+  monitorMetricsBarChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['知识条目总数', '本月新增', '待审核', '近7日命中次数'],
+      datasets: [{
+        label: '知识库指标',
+        data: [1247, 86, 12, 8432],
+        backgroundColor: [chartPrimary, chartSuccess, chartWarning, chartPrimaryLight],
+        borderRadius: 4,
+        borderSkipped: false
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { display: false }, border: { display: false } },
+        y: { grid: { color: 'oklch(0.94 0.005 250)' }, border: { display: false }, ticks: { callback: v => v >= 1000 ? (v/1000).toFixed(0) + 'k' : v } }
+      }
+    }
+  });
+}
+
+/* ═══════════════════════════════════════════
+   METRICS CHARTS: Multi-store bar
+   ═══════════════════════════════════════════ */
+let storeMetricsBarChart;
+function initStoreMetricsCharts() {
+  if (typeof Chart === 'undefined') return;
+  if (storeMetricsBarChart) return;
+  const ctx = document.getElementById('store-metrics-bar');
+  if (!ctx) return;
+  storeMetricsBarChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['店铺总数', '在线店铺', '总客服数', '今日总对话量'],
+      datasets: [{
+        label: '多店铺概览',
+        data: [3, 2, 18, 1456],
+        backgroundColor: [chartPrimary, chartSuccess, chartWarning, chartPrimaryLight],
+        borderRadius: 4,
+        borderSkipped: false
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { display: false }, border: { display: false } },
+        y: { grid: { color: 'oklch(0.94 0.005 250)' }, border: { display: false }, ticks: { callback: v => v >= 1000 ? (v/1000).toFixed(0) + 'k' : v } }
+      }
+    }
+  });
+}
+
+/* ═══════════════════════════════════════════
+   METRICS CHARTS: Training data doughnut + bar
+   ═══════════════════════════════════════════ */
+let trainingMetricsDoughnutChart, trainingMetricsBarChart;
+function initTrainingMetricsCharts() {
+  if (typeof Chart === 'undefined') return;
+  const ctx1 = document.getElementById('training-metrics-doughnut');
+  const ctx2 = document.getElementById('training-metrics-bar');
+  if (!ctx1 && !ctx2) return;
+  if (!trainingMetricsDoughnutChart && ctx1) {
+    trainingMetricsDoughnutChart = new Chart(ctx1, {
+      type: 'doughnut',
+      data: {
+        labels: ['已标注', '待标注'],
+        datasets: [{ data: [69.4, 30.6], backgroundColor: [chartSuccess, chartWarning], borderWidth: 0 }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        cutout: '65%',
+        plugins: {
+          legend: { position: 'bottom', labels: { padding: 12, usePointStyle: true, pointStyleWidth: 8 } },
+          tooltip: { callbacks: { label: (ctx) => ctx.label + ': ' + ctx.parsed + '%' } }
+        }
+      }
+    });
+  }
+  if (!trainingMetricsBarChart && ctx2) {
+    trainingMetricsBarChart = new Chart(ctx2, {
+      type: 'bar',
+      data: {
+        labels: ['总数据量', '已标注', '待标注', '准确率(%)'],
+        datasets: [{
+          label: '数据量',
+          data: [12345, 8567, 3778, 94.2],
+          backgroundColor: [chartPrimary, chartSuccess, chartWarning, chartPrimaryLight],
+          borderRadius: 4,
+          borderSkipped: false
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { grid: { display: false }, border: { display: false } },
+          y: { grid: { color: 'oklch(0.94 0.005 250)' }, border: { display: false }, ticks: { callback: v => v >= 1000 ? (v/1000).toFixed(0) + 'k' : v } }
+        }
+      }
+    });
+  }
+}
+
+/* ═══════════════════════════════════════════
+   METRICS CHARTS: Complaint bar
+   ═══════════════════════════════════════════ */
+let complaintMetricsBarChart;
+function initComplaintMetricsCharts() {
+  if (typeof Chart === 'undefined') return;
+  if (complaintMetricsBarChart) return;
+  const ctx = document.getElementById('complaint-metrics-bar');
+  if (!ctx) return;
+  complaintMetricsBarChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['本月客诉总量', '环比变化(%)', '平均处理时长(h)', '满意度(%)'],
+      datasets: [{
+        label: '客诉核心指标',
+        data: [347, 12.5, 4.2, 82.3],
+        backgroundColor: [chartDanger, chartWarning, chartPrimary, chartSuccess],
+        borderRadius: 4,
+        borderSkipped: false
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { display: false }, border: { display: false } },
+        y: { grid: { color: 'oklch(0.94 0.005 250)' }, border: { display: false } }
+      }
+    }
+  });
+}
 
 console.log('%c AI客服管理平台 %c v1.0.0 ', 'background:oklch(0.5 0.15 250);color:white;padding:4px 8px;border-radius:4px 0 0 4px;font-weight:bold', 'background:oklch(0.92 0.04 250);color:oklch(0.5 0.15 250);padding:4px 8px;border-radius:0 4px 4px 0');
 </script>

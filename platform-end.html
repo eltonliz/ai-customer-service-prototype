@@ -150,6 +150,10 @@ mark{background:oklch(0.85 0.15 80);color:var(--text);border-radius:2px;padding:
 .section--chart{margin-bottom:32px}
 .section--table{margin-bottom:16px}
 .section-title{font-size:0.9rem;font-weight:600;color:var(--text);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.charts-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.charts-row--single{grid-template-columns:1fr}
+.charts-row .chart-box h3{font-family:var(--serif);font-size:0.95rem;font-weight:400;color:var(--text);margin-bottom:12px}
+.charts-row .chart-box canvas{max-height:200px}
 .chart-box{background:oklch(0.98 0.003 260);border-radius:10px;padding:16px}
 .chart-box canvas{max-height:280px}
 .filter-bar{display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap}
@@ -352,16 +356,10 @@ kbd{display:inline-block;padding:2px 6px;font-family:var(--mono);font-size:0.75r
       </div>
       <div class="section">
         <div class="table-wrap">
-          <div class="metric-row"><span class="metric-label">活跃租户</span><span><span class="metric-value mono">1,284</span><span class="metric-change up">+12.3%</span></span></div>
-          <div class="metric-row"><span class="metric-label">今日对话量</span><span><span class="metric-value mono">89,432</span><span class="metric-change up">+8.7%</span></span></div>
-          <div class="metric-row"><span class="metric-label">平均响应时间</span><span><span class="metric-value mono">342ms</span><span class="metric-change down">-5.2%</span></span></div>
-          <div class="metric-row"><span class="metric-label">系统可用率</span><span><span class="metric-value mono">99.97%</span></span></div>
-          <div class="metric-row"><span class="metric-label">待处理告警</span><span><span class="metric-value mono">7</span><span class="metric-change down" style="color:var(--danger)">需关注</span></span></div>
-          <div class="metric-row"><span class="metric-label">AI模型调用量</span><span><span class="metric-value mono">2.4M</span><span class="metric-change up">+15.1%</span></span></div>
-          <div class="metric-row"><span class="metric-label">知识库命中率</span><span><span class="metric-value mono">87.3%</span><span class="metric-change up">+2.1%</span></span></div>
-          <div class="metric-row"><span class="metric-label">平均满意度</span><span><span class="metric-value mono">4.6/5.0</span><span class="metric-change up">+0.1</span></span></div>
-          <div class="metric-row"><span class="metric-label">内容审核积压</span><span><span class="metric-value mono">128</span><span class="metric-change down" style="color:var(--warning)">处理中</span></span></div>
-          <div class="metric-row"><span class="metric-label">本月新增租户</span><span><span class="metric-value mono">43</span><span class="metric-change up">+18.6%</span></span></div>
+          <div class="charts-row">
+          <div class="chart-box"><h3>平台核心指标</h3><canvas id="plat-dash-metrics-bar" height="200"></canvas></div>
+          <div class="chart-box"><h3>资源分布</h3><canvas id="plat-dash-metrics-doughnut" height="200"></canvas></div>
+        </div>
         </div>
       </div>
       <div class="grid-2 section--chart">
@@ -627,11 +625,8 @@ kbd{display:inline-block;padding:2px 6px;font-family:var(--mono);font-size:0.75r
     <!-- ==================== 7. VIOLATIONS ==================== -->
     <div class="page" id="page-violations">
       <div class="page-header"><h1>违规监控</h1><p>实时监控与处理平台违规行为</p></div>
-      <div class="section"><div class="table-wrap">
-        <div class="metric-row"><span class="metric-label">扫描状态</span><span><span class="dot dot-success"></span> 实时扫描中 <span class="mono" style="color:var(--muted);margin-left:8px">上次扫描: 2分钟前</span></span></div>
-        <div class="metric-row"><span class="metric-label">今日违规数</span><span class="metric-value mono">23</span></div>
-        <div class="metric-row"><span class="metric-label">待处理</span><span class="metric-value mono" style="color:var(--danger)">8</span></div>
-        <div class="metric-row"><span class="metric-label">本周违规趋势</span><span><span class="metric-change down">-12.5%</span> 较上周</span></div>
+      <div class="section"><div class="charts-row charts-row--single">
+        <div class="chart-box"><h3>违规处理状态</h3><canvas id="violation-metrics-doughnut" height="180"></canvas></div>
       </div></div>
       <div class="filter-bar">
         <select class="form-select" id="violation-severity" onchange="filterViolationTable()"><option value="">全部等级</option><option value="高">高</option><option value="中">中</option><option value="低">低</option></select>
@@ -692,13 +687,8 @@ kbd{display:inline-block;padding:2px 6px;font-family:var(--mono);font-size:0.75r
     <!-- ==================== 9. KB MONITOR ==================== -->
     <div class="page" id="page-kb-monitor">
       <div class="page-header"><h1>全局知识库监控</h1><p>知识库健康度与覆盖率监控</p></div>
-      <div class="section"><div class="table-wrap">
-        <div class="metric-row"><span class="metric-label">知识库总数</span><span class="metric-value mono">342</span></div>
-        <div class="metric-row"><span class="metric-label">平均覆盖率</span><span><span class="metric-value mono">87.3%</span><span class="metric-change up">+2.1%</span></span></div>
-        <div class="metric-row"><span class="metric-label">待更新条目</span><span class="metric-value mono" style="color:var(--warning)">1,204</span></div>
-        <div class="metric-row"><span class="metric-label">索引构建成功率</span><span class="metric-value mono">99.2%</span></div>
-        <div class="metric-row"><span class="metric-label">平均检索延迟</span><span class="metric-value mono">45ms</span></div>
-        <div class="metric-row"><span class="metric-label">知识条目总数</span><span class="metric-value mono">2.8M</span></div>
+      <div class="section"><div class="charts-row charts-row--single">
+        <div class="chart-box"><h3>知识库核心指标</h3><canvas id="plat-kb-metrics-bar" height="180"></canvas></div>
       </div></div>
       <div class="section section--chart"><div class="chart-box"><div class="section-title">覆盖率趋势 (30天)</div><canvas id="chart-kb-line"></canvas></div></div>
       <div class="section"><div class="section-title">知识缺口列表</div><div class="table-wrap"><table><thead><tr><th>业务线</th><th>缺口主题</th><th>未命中次数</th><th>影响对话数</th><th>优先级</th><th>操作</th></tr></thead>
@@ -816,13 +806,8 @@ kbd{display:inline-block;padding:2px 6px;font-family:var(--mono);font-size:0.75r
     <!-- ==================== 13. SECURITY ==================== -->
     <div class="page" id="page-security">
       <div class="page-header"><h1>数据安全</h1><p>安全审计、数据保护与合规报告</p></div>
-      <div class="section"><div class="table-wrap">
-        <div class="metric-row"><span class="metric-label">安全评分</span><span class="metric-value mono" style="color:var(--success)">94/100</span></div>
-        <div class="metric-row"><span class="metric-label">本月安全事件</span><span class="metric-value mono">3</span></div>
-        <div class="metric-row"><span class="metric-label">数据加密覆盖率</span><span class="metric-value mono">100%</span></div>
-        <div class="metric-row"><span class="metric-label">上次安全审计</span><span class="metric-value mono">2026-04-01</span></div>
-        <div class="metric-row"><span class="metric-label">SSL证书到期</span><span class="metric-value mono">2027-02-15</span></div>
-        <div class="metric-row"><span class="metric-label">MFA启用率</span><span class="metric-value mono">98.5%</span></div>
+      <div class="section"><div class="charts-row charts-row--single">
+        <div class="chart-box"><h3>安全指标</h3><canvas id="security-metrics-bar" height="180"></canvas></div>
       </div></div>
       <div class="section"><div class="section-title">安全事件</div><div class="table-wrap"><table><thead><tr><th>时间</th><th>事件类型</th><th>详情</th><th>等级</th><th>状态</th></tr></thead>
         <tbody>
@@ -903,13 +888,8 @@ kbd{display:inline-block;padding:2px 6px;font-family:var(--mono);font-size:0.75r
     <!-- ==================== 16. QUALITY ==================== -->
     <div class="page" id="page-quality">
       <div class="page-header"><h1>智能质检</h1><p>AI对话质量评分与违规检测</p></div>
-      <div class="section"><div class="table-wrap">
-        <div class="metric-row"><span class="metric-label">整体质检评分</span><span><span class="metric-value mono">92.4</span><span class="metric-change up">+1.2</span></span></div>
-        <div class="metric-row"><span class="metric-label">今日质检对话数</span><span class="metric-value mono">8,432</span></div>
-        <div class="metric-row"><span class="metric-label">违规对话数</span><span class="metric-value mono" style="color:var(--danger)">47</span></div>
-        <div class="metric-row"><span class="metric-label">平均满意度</span><span class="metric-value mono">4.6/5.0</span></div>
-        <div class="metric-row"><span class="metric-label">首次解决率</span><span class="metric-value mono">78.3%</span></div>
-        <div class="metric-row"><span class="metric-label">平均对话轮次</span><span class="metric-value mono">4.2</span></div>
+      <div class="section"><div class="charts-row charts-row--single">
+        <div class="chart-box"><h3>质检核心指标</h3><canvas id="quality-metrics-bar" height="180"></canvas></div>
       </div></div>
       <div class="section"><div class="section-title">违规对话详情</div><div class="table-wrap"><table><thead><tr><th>对话ID</th><th>业务线</th><th>违规类型</th><th>质检评分</th><th>时间</th><th>操作</th></tr></thead>
         <tbody>
@@ -1032,14 +1012,9 @@ kbd{display:inline-block;padding:2px 6px;font-family:var(--mono);font-size:0.75r
     <!-- ==================== 20. COST ==================== -->
     <div class="page" id="page-cost">
       <div class="page-header"><h1>成本分析</h1><p>平台运营成本与ROI分析</p></div>
-      <div class="section"><div class="table-wrap">
-        <div class="metric-row"><span class="metric-label">本月总成本</span><span class="metric-value mono">$124,580</span></div>
-        <div class="metric-row"><span class="metric-label">API调用成本</span><span class="metric-value mono">$89,230</span></div>
-        <div class="metric-row"><span class="metric-label">基础设施成本</span><span class="metric-value mono">$28,450</span></div>
-        <div class="metric-row"><span class="metric-label">人力成本分摊</span><span class="metric-value mono">$6,900</span></div>
-        <div class="metric-row"><span class="metric-label">ROI</span><span><span class="metric-value mono" style="color:var(--success)">342%</span><span class="metric-change up">+18%</span></span></div>
-        <div class="metric-row"><span class="metric-label">单次对话成本</span><span class="metric-value mono">$0.014</span></div>
-        <div class="metric-row"><span class="metric-label">月度成本趋势</span><span><span class="metric-change up">+4.8%</span> 环比增长</span></div>
+      <div class="section"><div class="charts-row">
+        <div class="chart-box"><h3>成本构成</h3><canvas id="plat-cost-metrics-doughnut" height="180"></canvas></div>
+        <div class="chart-box"><h3>成本指标</h3><canvas id="plat-cost-metrics-bar" height="180"></canvas></div>
       </div></div>
       <div class="grid-2 section--chart">
         <div class="chart-box"><div class="section-title">成本趋势 (近6月)</div><canvas id="chart-cost-bar"></canvas></div>
@@ -1067,15 +1042,9 @@ kbd{display:inline-block;padding:2px 6px;font-family:var(--mono);font-size:0.75r
     <!-- ==================== 21. PERFORMANCE ANALYTICS (BONUS) ==================== -->
     <div class="page" id="page-performance">
       <div class="page-header"><h1>性能分析</h1><p>平台性能指标深度分析与趋势预测</p></div>
-      <div class="section"><div class="section-title">关键性能指标</div><div class="table-wrap">
-        <div class="metric-row"><span class="metric-label">P50 响应时间</span><span class="metric-value mono">342ms</span></div>
-        <div class="metric-row"><span class="metric-label">P90 响应时间</span><span class="metric-value mono">580ms</span></div>
-        <div class="metric-row"><span class="metric-label">P95 响应时间</span><span class="metric-value mono">720ms</span></div>
-        <div class="metric-row"><span class="metric-label">P99 响应时间</span><span class="metric-value mono">1,100ms</span></div>
-        <div class="metric-row"><span class="metric-label">平均吞吐量</span><span class="metric-value mono">3,450 QPS</span></div>
-        <div class="metric-row"><span class="metric-label">峰值吞吐量</span><span class="metric-value mono">5,820 QPS</span></div>
-        <div class="metric-row"><span class="metric-label">错误率 (5xx)</span><span class="metric-value mono">0.08%</span></div>
-        <div class="metric-row"><span class="metric-label">可用性 (SLA)</span><span class="metric-value mono" style="color:var(--success)">99.97%</span></div>
+      <div class="section"><div class="section-title">关键性能指标</div><div class="charts-row">
+        <div class="chart-box"><h3>响应时间分布</h3><canvas id="perf-latency-bar" height="180"></canvas></div>
+        <div class="chart-box"><h3>吞吐与可用性</h3><canvas id="perf-throughput-bar" height="180"></canvas></div>
       </div></div>
       <div class="section"><div class="section-title">各业务线性能对比</div><div class="table-wrap"><table><thead><tr><th>业务线</th><th>P50延迟</th><th>P99延迟</th><th>吞吐量</th><th>错误率</th><th>可用性</th><th>趋势</th></tr></thead>
         <tbody>
@@ -1108,15 +1077,8 @@ kbd{display:inline-block;padding:2px 6px;font-family:var(--mono);font-size:0.75r
           <tr><td class="mono">10</td><td class="mono">/api/v2/quality/score</td><td class="mono">620ms</td><td class="mono">1,500ms</td><td class="mono">1,890</td><td>全部</td></tr>
         </tbody>
       </table></div></div>
-      <div class="section"><div class="section-title">基础设施资源使用</div><div class="table-wrap">
-        <div class="metric-row"><span class="metric-label">CPU 使用率 (集群平均)</span><span><span class="metric-value mono">62%</span><div class="progress-bar" style="width:120px;display:inline-block;vertical-align:middle;margin-left:8px"><div class="fill" style="width:62%;background:var(--success)"></div></div></span></div>
-        <div class="metric-row"><span class="metric-label">内存使用率 (集群平均)</span><span><span class="metric-value mono">74%</span><div class="progress-bar" style="width:120px;display:inline-block;vertical-align:middle;margin-left:8px"><div class="fill" style="width:74%;background:var(--warning)"></div></div></span></div>
-        <div class="metric-row"><span class="metric-label">磁盘使用率</span><span><span class="metric-value mono">58%</span><div class="progress-bar" style="width:120px;display:inline-block;vertical-align:middle;margin-left:8px"><div class="fill" style="width:58%;background:var(--success)"></div></div></span></div>
-        <div class="metric-row"><span class="metric-label">网络带宽使用</span><span><span class="metric-value mono">45%</span><div class="progress-bar" style="width:120px;display:inline-block;vertical-align:middle;margin-left:8px"><div class="fill" style="width:45%;background:var(--success)"></div></div></span></div>
-        <div class="metric-row"><span class="metric-label">数据库连接池</span><span><span class="metric-value mono">156 / 200</span><div class="progress-bar" style="width:120px;display:inline-block;vertical-align:middle;margin-left:8px"><div class="fill" style="width:78%;background:var(--warning)"></div></div></span></div>
-        <div class="metric-row"><span class="metric-label">Redis 缓存命中率</span><span class="metric-value mono" style="color:var(--success)">94.2%</span></div>
-        <div class="metric-row"><span class="metric-label">Kafka 消息积压</span><span class="metric-value mono">1,234</span></div>
-        <div class="metric-row"><span class="metric-label">活跃计算节点</span><span class="metric-value mono">24 / 30</span></div>
+      <div class="section"><div class="charts-row charts-row--single">
+        <div class="chart-box"><h3>资源使用率</h3><canvas id="perf-resource-bar" height="180"></canvas></div>
       </div></div>
       <div class="section"><div class="section-title">节点状态详情</div><div class="table-wrap"><table><thead><tr><th>节点</th><th>角色</th><th>CPU</th><th>内存</th><th>磁盘</th><th>运行时间</th><th>状态</th></tr></thead>
         <tbody>
@@ -1188,13 +1150,8 @@ kbd{display:inline-block;padding:2px 6px;font-family:var(--mono);font-size:0.75r
     <!-- ==================== 22. DATA BACKUP (BONUS) ==================== -->
     <div class="page" id="page-data-backup">
       <div class="page-header"><h1>数据备份</h1><p>平台数据备份策略与恢复管理</p></div>
-      <div class="section"><div class="table-wrap">
-        <div class="metric-row"><span class="metric-label">备份策略</span><span class="metric-value mono">每日增量 + 每周全量</span></div>
-        <div class="metric-row"><span class="metric-label">上次全量备份</span><span class="metric-value mono">2026-04-13 03:00</span></div>
-        <div class="metric-row"><span class="metric-label">备份存储使用</span><span><span class="metric-value mono">2.4TB</span><span class="metric-change up">/ 5TB</span></span></div>
-        <div class="metric-row"><span class="metric-label">备份成功率 (30天)</span><span class="metric-value mono" style="color:var(--success)">100%</span></div>
-        <div class="metric-row"><span class="metric-label">数据恢复RTO</span><span class="metric-value mono">15分钟</span></div>
-        <div class="metric-row"><span class="metric-label">异地备份</span><span><span class="dot dot-success"></span> 华东 + 华南双活</span></div>
+      <div class="section"><div class="charts-row charts-row--single">
+        <div class="chart-box"><h3>备份概览</h3><canvas id="backup-metrics-bar" height="160"></canvas></div>
       </div></div>
       <div class="section"><div class="section-title">备份记录</div><div class="table-wrap"><table><thead><tr><th>备份时间</th><th>类型</th><th>数据量</th><th>耗时</th><th>存储位置</th><th>状态</th><th>操作</th></tr></thead>
         <tbody>
@@ -1229,15 +1186,8 @@ kbd{display:inline-block;padding:2px 6px;font-family:var(--mono);font-size:0.75r
         <button class="btn btn-primary" onclick="toast('备份策略已保存','success')">保存策略</button>
         <button class="btn" onclick="toast('手动备份已触发','info')" style="margin-left:8px">立即执行全量备份</button>
       </div></div>
-      <div class="section"><div class="section-title">备份概览</div><div class="table-wrap">
-        <div class="metric-row"><span class="metric-label">备份策略</span><span class="metric-value mono">每日增量 + 每周全量</span></div>
-        <div class="metric-row"><span class="metric-label">上次全量备份</span><span class="metric-value mono">2026-04-13 03:00</span></div>
-        <div class="metric-row"><span class="metric-label">备份存储使用</span><span><span class="metric-value mono">2.4TB</span><span class="metric-change up">/ 5TB</span></span></div>
-        <div class="metric-row"><span class="metric-label">备份成功率 (30天)</span><span class="metric-value mono" style="color:var(--success)">100%</span></div>
-        <div class="metric-row"><span class="metric-label">数据恢复RTO</span><span class="metric-value mono">15分钟</span></div>
-        <div class="metric-row"><span class="metric-label">异地备份</span><span><span class="dot dot-success"></span> 华东 + 华南双活</span></div>
-        <div class="metric-row"><span class="metric-label">上次恢复测试</span><span class="metric-value mono">2026-04-01</span></div>
-        <div class="metric-row"><span class="metric-label">恢复测试结果</span><span><span class="dot dot-success"></span> 全部通过 (12/12)</span></div>
+      <div class="section"><div class="section-title">备份概览</div><div class="charts-row charts-row--single">
+        <div class="chart-box"><h3>备份详情</h3><canvas id="backup-detail-bar" height="160"></canvas></div>
       </div></div>
     </div>
     <!-- ==================== 23. NOTIFICATIONS ==================== -->
@@ -1751,6 +1701,7 @@ function initChartsForPage(page){
       destroyChart('chart-dash-line');
       var c3=document.getElementById('chart-dash-line');
       if(c3)chartInstances['chart-dash-line']=new Chart(c3,{type:'line',data:{labels:['00:00','02:00','04:00','06:00','08:00','10:00','12:00','14:00','16:00','18:00','20:00','22:00'],datasets:[{label:'P50',data:[280,260,240,250,310,380,420,390,370,350,320,290],borderColor:'oklch(0.55 0.2 260)',backgroundColor:'oklch(0.55 0.2 260 / 0.1)',fill:true,tension:0.4,pointRadius:2},{label:'P99',data:[580,540,510,520,640,720,810,760,730,700,650,600],borderColor:'oklch(0.6 0.2 25)',backgroundColor:'oklch(0.6 0.2 25 / 0.05)',fill:true,tension:0.4,pointRadius:2}]},options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{labels:{font:cFont,color:tickColor}}},scales:scaleOpts}});
+      initPlatDashMetricsChart();
       break;
     case 'complaints':
       destroyChart('chart-complaints-bar');
@@ -1777,7 +1728,20 @@ function initChartsForPage(page){
       destroyChart('chart-cost-doughnut');
       var c9=document.getElementById('chart-cost-doughnut');
       if(c9)chartInstances['chart-cost-doughnut']=new Chart(c9,{type:'doughnut',data:{labels:['API调用','基础设施','人力','其他'],datasets:[{data:[71.6,22.8,5.5,0.1],backgroundColor:['oklch(0.55 0.2 260)','oklch(0.65 0.15 145)','oklch(0.75 0.15 80)','oklch(0.7 0.01 260)'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{position:'right',labels:{font:cFont,color:tickColor,padding:12}}}}});
+      initPlatCostMetricsChart();
       break;
+    case 'violations':
+      initViolationMetricsChart();break;
+    case 'kb-monitor':
+      initKbMetricsChart();break;
+    case 'security':
+      initSecurityMetricsChart();break;
+    case 'quality':
+      initQualityMetricsChart();break;
+    case 'performance':
+      initPerfLatencyChart();initPerfThroughputChart();initPerfResourceChart();break;
+    case 'data-backup':
+      initBackupMetricsChart();initBackupDetailChart();break;
     case 'llm':
       destroyChart('chart-llm-radar');
       var c10=document.getElementById('chart-llm-radar');
@@ -1785,6 +1749,83 @@ function initChartsForPage(page){
       break;
   }
 }
+
+/* ========== METRIC CHART INIT FUNCTIONS ========== */
+var mBarOpts={responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{font:mFont,color:tickColor},grid:{display:false}},y:{ticks:{font:mFont,color:tickColor},grid:{color:'oklch(0.94 0.005 260)'}}}};
+var mDoughnutOpts={responsive:true,maintainAspectRatio:false,cutout:'65%',plugins:{legend:{position:'bottom',labels:{font:cFont,color:tickColor,padding:10,boxWidth:12}}}};
+var cPrimary='oklch(0.5 0.15 250)',cSuccess='oklch(0.65 0.15 145)',cWarning='oklch(0.75 0.15 80)',cDanger='oklch(0.6 0.2 25)',cMuted='oklch(0.75 0.02 250)',cAccent='oklch(0.65 0.18 250)';
+
+function initPlatDashMetricsChart(){
+  destroyChart('plat-dash-metrics-bar');destroyChart('plat-dash-metrics-doughnut');
+  var el1=document.getElementById('plat-dash-metrics-bar');
+  if(el1)chartInstances['plat-dash-metrics-bar']=new Chart(el1,{type:'bar',data:{labels:['活跃租户','今日对话(K)','响应时间(ms)','可用率(%)','待处理告警','AI调用(M)','KB命中率(%)','满意度','审核积压','新增租户'],datasets:[{label:'指标值',data:[1284,89.4,342,99.97,7,2.4,87.3,92,128,43],backgroundColor:[cPrimary,cPrimary,cAccent,cSuccess,cDanger,cPrimary,cSuccess,cWarning,cWarning,cAccent],borderRadius:4,borderSkipped:false}]},options:mBarOpts});
+  var el2=document.getElementById('plat-dash-metrics-doughnut');
+  if(el2)chartInstances['plat-dash-metrics-doughnut']=new Chart(el2,{type:'doughnut',data:{labels:['电商','金融','医疗','教育','其他'],datasets:[{data:[38,25,18,12,7],backgroundColor:[cPrimary,cSuccess,cDanger,cWarning,cMuted],borderWidth:0}]},options:mDoughnutOpts});
+}
+
+function initViolationMetricsChart(){
+  destroyChart('violation-metrics-doughnut');
+  var el=document.getElementById('violation-metrics-doughnut');
+  if(el)chartInstances['violation-metrics-doughnut']=new Chart(el,{type:'doughnut',data:{labels:['已处理','待处理'],datasets:[{data:[15,8],backgroundColor:[cSuccess,cDanger],borderWidth:0}]},options:mDoughnutOpts});
+}
+
+function initKbMetricsChart(){
+  destroyChart('plat-kb-metrics-bar');
+  var el=document.getElementById('plat-kb-metrics-bar');
+  if(el)chartInstances['plat-kb-metrics-bar']=new Chart(el,{type:'bar',data:{labels:['KB总数','覆盖率(%)','待更新','索引成功率(%)','检索延迟(ms)','条目数(K)'],datasets:[{label:'指标值',data:[342,87.3,1204,99.2,45,2800],backgroundColor:[cPrimary,cSuccess,cWarning,cSuccess,cAccent,cPrimary],borderRadius:4,borderSkipped:false}]},options:mBarOpts});
+}
+
+function initSecurityMetricsChart(){
+  destroyChart('security-metrics-bar');
+  var el=document.getElementById('security-metrics-bar');
+  if(el)chartInstances['security-metrics-bar']=new Chart(el,{type:'bar',data:{labels:['安全评分','安全事件','加密覆盖(%)','MFA启用率(%)'],datasets:[{label:'指标值',data:[94,3,100,98.5],backgroundColor:[cSuccess,cDanger,cSuccess,cPrimary],borderRadius:4,borderSkipped:false}]},options:mBarOpts});
+}
+
+function initQualityMetricsChart(){
+  destroyChart('quality-metrics-bar');
+  var el=document.getElementById('quality-metrics-bar');
+  if(el)chartInstances['quality-metrics-bar']=new Chart(el,{type:'bar',data:{labels:['质检评分','质检对话(K)','违规对话','满意度','首次解决率(%)','对话轮次'],datasets:[{label:'指标值',data:[92.4,8.4,47,92,78.3,4.2],backgroundColor:[cSuccess,cPrimary,cDanger,cSuccess,cAccent,cPrimary],borderRadius:4,borderSkipped:false}]},options:mBarOpts});
+}
+
+function initPlatCostMetricsChart(){
+  destroyChart('plat-cost-metrics-doughnut');destroyChart('plat-cost-metrics-bar');
+  var el1=document.getElementById('plat-cost-metrics-doughnut');
+  if(el1)chartInstances['plat-cost-metrics-doughnut']=new Chart(el1,{type:'doughnut',data:{labels:['API调用','基础设施','人力'],datasets:[{data:[89230,28450,6900],backgroundColor:[cPrimary,cSuccess,cWarning],borderWidth:0}]},options:mDoughnutOpts});
+  var el2=document.getElementById('plat-cost-metrics-bar');
+  if(el2)chartInstances['plat-cost-metrics-bar']=new Chart(el2,{type:'bar',data:{labels:['总成本(K)','API成本(K)','基础设施(K)','人力(K)','ROI(%)','单次成本(分)'],datasets:[{label:'指标值',data:[124.6,89.2,28.5,6.9,342,1.4],backgroundColor:[cPrimary,cPrimary,cSuccess,cWarning,cAccent,cAccent],borderRadius:4,borderSkipped:false}]},options:mBarOpts});
+}
+
+function initPerfLatencyChart(){
+  destroyChart('perf-latency-bar');
+  var el=document.getElementById('perf-latency-bar');
+  if(el)chartInstances['perf-latency-bar']=new Chart(el,{type:'bar',data:{labels:['P50','P90','P95','P99'],datasets:[{label:'响应时间(ms)',data:[342,580,720,1100],backgroundColor:[cSuccess,cPrimary,cWarning,cDanger],borderRadius:4,borderSkipped:false}]},options:mBarOpts});
+}
+
+function initPerfThroughputChart(){
+  destroyChart('perf-throughput-bar');
+  var el=document.getElementById('perf-throughput-bar');
+  if(el)chartInstances['perf-throughput-bar']=new Chart(el,{type:'bar',data:{labels:['平均吞吐(QPS)','峰值吞吐(QPS)','错误率(%)','可用率(%)'],datasets:[{label:'指标值',data:[3450,5820,0.08,99.97],backgroundColor:[cPrimary,cAccent,cDanger,cSuccess],borderRadius:4,borderSkipped:false}]},options:mBarOpts});
+}
+
+function initPerfResourceChart(){
+  destroyChart('perf-resource-bar');
+  var el=document.getElementById('perf-resource-bar');
+  if(el)chartInstances['perf-resource-bar']=new Chart(el,{type:'bar',data:{labels:['CPU(%)','内存(%)','磁盘(%)','网络(%)','DB连接池(%)','Redis(%)','Kafka积压','活跃节点'],datasets:[{label:'使用率',data:[62,74,58,45,78,94.2,1234,24],backgroundColor:[cSuccess,cWarning,cSuccess,cSuccess,cWarning,cSuccess,cAccent,cPrimary],borderRadius:4,borderSkipped:false}]},options:mBarOpts});
+}
+
+function initBackupMetricsChart(){
+  destroyChart('backup-metrics-bar');
+  var el=document.getElementById('backup-metrics-bar');
+  if(el)chartInstances['backup-metrics-bar']=new Chart(el,{type:'bar',data:{labels:['存储使用(TB)','存储总量(TB)','成功率(%)','RTO(分钟)'],datasets:[{label:'指标值',data:[2.4,5,100,15],backgroundColor:[cPrimary,cMuted,cSuccess,cAccent],borderRadius:4,borderSkipped:false}]},options:mBarOpts});
+}
+
+function initBackupDetailChart(){
+  destroyChart('backup-detail-bar');
+  var el=document.getElementById('backup-detail-bar');
+  if(el)chartInstances['backup-detail-bar']=new Chart(el,{type:'bar',data:{labels:['存储使用(TB)','存储总量(TB)','成功率(%)','RTO(分钟)','恢复测试(项)'],datasets:[{label:'指标值',data:[2.4,5,100,15,12],backgroundColor:[cPrimary,cMuted,cSuccess,cAccent,cSuccess],borderRadius:4,borderSkipped:false}]},options:mBarOpts});
+}
+
+/* ========== END METRIC CHART INIT FUNCTIONS ========== */
 
 function initAllCharts(){
   /* 1. Dashboard Bar */
